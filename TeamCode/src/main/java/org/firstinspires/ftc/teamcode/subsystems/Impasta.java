@@ -3,13 +3,20 @@ package org.firstinspires.ftc.teamcode.subsystems;
 import com.kauailabs.navx.ftc.AHRS;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.IMU;
+import com.qualcomm.robotcore.hardware.Servo;
 
 public class Impasta {
     // Hardware variables
     private AHRS imu;
     private IMU.Parameters parameters;
     private DcMotor fl, fr, bl, br, leftSlide, rightSlide, Intake;
+    private Servo leftOut, rightOut, leftV4B, rightV4B;
     private PID pid = new PID(0.5, 0, 0);
+
+    private boolean leftOutRaised = true;
+    private boolean rightOutRaised = true;
+
+    private boolean v4bAtRest = true;
 
 
     // Constructor for Impasta class
@@ -38,6 +45,11 @@ public class Impasta {
 //        imu.initialize(parameters);
     }
 
+    public Impasta(DcMotor leftSlide, DcMotor rightSlide) {
+        this.leftSlide = leftSlide;
+        this.rightSlide = rightSlide;
+    }
+
     public Impasta(DcMotor fl, DcMotor fr, DcMotor bl, DcMotor br, DcMotor leftSlide, DcMotor rightSlide, DcMotor Intake) {
         // Assigning hardware references to local variables
         this.fl = fl;
@@ -47,6 +59,24 @@ public class Impasta {
         this.leftSlide = leftSlide;
         this.rightSlide = rightSlide;
         this.Intake = Intake;
+
+        fr.setDirection(DcMotor.Direction.REVERSE);
+        br.setDirection(DcMotor.Direction.REVERSE);
+    }
+
+    public Impasta(DcMotor fl, DcMotor fr, DcMotor bl, DcMotor br, DcMotor leftSlide, DcMotor rightSlide, DcMotor Intake, Servo leftOut, Servo rightOut, Servo leftV4B, Servo rightV4b) {
+        // Assigning hardware references to local variables
+        this.fl = fl;
+        this.fr = fr;
+        this.bl = bl;
+        this.br = br;
+        this.leftSlide = leftSlide;
+        this.rightSlide = rightSlide;
+        this.Intake = Intake;
+        this.leftOut = leftOut;
+        this.rightOut = rightOut;
+        this.leftV4B = leftV4B;
+        this.rightV4B = rightV4b;
 
         fr.setDirection(DcMotor.Direction.REVERSE);
         br.setDirection(DcMotor.Direction.REVERSE);
@@ -115,6 +145,7 @@ public class Impasta {
         leftSlide.setPower(-power);
         rightSlide.setPower(power);
     }
+
     public double getSlidesPos() {
         return leftSlide.getCurrentPosition();
     }
@@ -127,12 +158,58 @@ public class Impasta {
         rightSlide.setTargetPosition(-output);
         rightSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
+
     public boolean atUpper() {
         return getSlidesPos() > 600;
     }
 
     public boolean atLower() {
         return getSlidesPos() < 5;
+    }
+
+    public void toggleLeftOut() {
+        if (leftOutRaised) {
+            leftOut.setPosition(0.75);
+        } else {
+            leftOut.setPosition(0.55);
+        }
+        leftOutRaised = !leftOutRaised;
+    }
+
+    public void toggleRightOut() {
+        if (rightOutRaised) {
+            rightOut.setPosition(0.5);
+        } else {
+            rightOut.setPosition(0.6);
+        }
+        rightOutRaised = !rightOutRaised;
+    }
+
+    public void toggleV4B() {
+        if (v4bAtRest) {
+            leftV4B.setPosition(180);
+            rightV4B.setPosition(180);
+        } else {
+            leftV4B.setPosition(0);
+            rightV4B.setPosition(0);
+        }
+        v4bAtRest = !v4bAtRest;
+    }
+
+    public double getLeftV4Bpos() {
+        return leftV4B.getPosition();
+    }
+
+    public double getRightV4Bpos() {
+        return rightV4B.getPosition();
+    }
+
+    public double getLeftOutPos() {
+        return leftOut.getPosition();
+    }
+
+    public double getRightOutPos() {
+        return rightOut.getPosition();
     }
 
 }

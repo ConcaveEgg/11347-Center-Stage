@@ -15,7 +15,7 @@ import org.firstinspires.ftc.teamcode.subsystems.Impasta;
 @TeleOp
 public class ImpastaTeleOp extends LinearOpMode {
     // Declaring hardware variables
-    private DcMotor fl, fr, bl, br, leftSlide, rightSlide, Winch, Intake;
+    private DcMotor fl, fr, bl, br, leftSlide, rightSlide, Intake;
     private Servo out1, out2, launchPlane, aimLauncher;
     private Servo DRV4BL, DRV4BR;
     private DistanceSensor leftSensor;
