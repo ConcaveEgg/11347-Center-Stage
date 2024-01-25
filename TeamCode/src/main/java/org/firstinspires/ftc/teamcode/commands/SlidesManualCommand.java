@@ -10,7 +10,7 @@ public class SlidesManualCommand extends CommandBase {
     private final Slides slides;
     private final GamepadEx mechanisms;
     private final double up = 1.0;
-    private final double down = -0.7;
+    private final double down = -0.7; //Comment so can push
     private final double slowUp = 0.65;
     private final double slowDown = -0.01;
 
