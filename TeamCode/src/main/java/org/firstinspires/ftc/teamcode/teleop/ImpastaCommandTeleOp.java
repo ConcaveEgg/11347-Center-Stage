@@ -10,7 +10,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 
-import org.firstinspires.ftc.teamcode.Auto.BulkCacheCommand;
+import org.firstinspires.ftc.teamcode.auto.BulkCacheCommand;
 import org.firstinspires.ftc.teamcode.subsystems.Impasta;
 import org.firstinspires.ftc.teamcode.subsystems.Mechanisms;
 import org.firstinspires.ftc.teamcode.subsystems.SlidePID;
