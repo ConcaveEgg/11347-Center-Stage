@@ -34,7 +34,7 @@ dependencies {
 }
 
 repositories {
-    flatDir {
-        dirs 'libs', navxPath
+    flatDir{
+        dirs '../libs'
     }
 }
