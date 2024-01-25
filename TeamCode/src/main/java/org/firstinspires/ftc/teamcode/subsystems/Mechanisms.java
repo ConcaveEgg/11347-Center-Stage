@@ -12,10 +12,6 @@ public class Mechanisms extends SubsystemBase {
     private Servo out1, out2, launchPlane, DRV4BL, DRV4BR;
 
     public Mechanisms(Gamepad gamepad1, Gamepad gamepad2, HardwareMap hardwareMap) {
-        DcMotor leftSlide = hardwareMap.dcMotor.get("frontEncoder"); // Slides
-        DcMotor rightSlide = hardwareMap.dcMotor.get("Right Slide"); // Slides
-        DcMotor Intake = hardwareMap.dcMotor.get("leftEncoder"); //Pixel Intake
-
         DRV4BL = hardwareMap.servo.get("leftV4B"); //Virtual Four Bar Servos // Left Side
         DRV4BR = hardwareMap.servo.get("rightV4B"); //Virtual Four Bar Servos //Right Side
         launchPlane = hardwareMap.servo.get("launcher");

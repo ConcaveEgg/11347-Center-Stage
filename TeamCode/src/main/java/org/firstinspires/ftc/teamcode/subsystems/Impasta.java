@@ -13,7 +13,7 @@ public class Impasta {
     private IMU.Parameters parameters;
     private DcMotor fl, fr, bl, br, leftSlide, rightSlide, Intake;
     private Servo leftOut, rightOut, leftV4B, rightV4B;
-    private PID pid = new PID(1, 0, 0);
+    private PID pid = new PID(0.02, 0, 0);
 
     private boolean leftOutRaised = true;
     private boolean rightOutRaised = true;
@@ -130,13 +130,13 @@ public class Impasta {
 //  ================================================ Slide Stuff ================================================
 
     public void setSlidesPower(double power) {
-        leftSlide.setPower(-power - 0.11);
-        rightSlide.setPower(power + 0.11);
+        leftSlide.setPower(-power);
+        rightSlide.setPower(power);
     }
 
     public void runManual(double dr4bp) {
-        leftSlide.setPower(-dr4bp * 0.65 - 0.11);
-        rightSlide.setPower(dr4bp * 0.65 + 0.11);
+        leftSlide.setPower(-dr4bp);
+        rightSlide.setPower(dr4bp);
     }
 
     public double getSlidesPos() {
@@ -144,7 +144,7 @@ public class Impasta {
     }
 
     public void runPID(double targetPos) {
-        double output = pid.update(leftSlide.getCurrentPosition(), targetPos) + 0.11;
+        double output = pid.update(leftSlide.getCurrentPosition(), targetPos);
         leftSlide.setPower(output);
         rightSlide.setPower(-output);
     }
@@ -152,8 +152,8 @@ public class Impasta {
     public void resetSlide() {
         leftSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         rightSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        leftSlide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        rightSlide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        leftSlide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightSlide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
     public double getPosition() {return rightSlide.getCurrentPosition();}

@@ -24,34 +24,31 @@ public class ImpastaCommandTeleOp extends CommandOpMode {
     Mechanisms mechanisms;
 
     //Slide Positions
-    final int HIGH = 729;
-    final int MID = 519;
-    final int LOW = 298;
+    final int HIGH = 400;
+    final int MID = 300;  
+    final int LOW = 200;
     final int GROUND = 30;
 
     private boolean pidActive = false;
 
-    private Servo out1, out2, launchPlane, DRV4BL, DRV4BR;
+    private DcMotor fl, fr, bl, br, leftSlide, rightSlide, Intake;
 
     @Override
     public void initialize() {
         // Initializing hardware
         GamepadEx mechanism = new GamepadEx(gamepad2);
 
-        DcMotor fl = hardwareMap.dcMotor.get("leftFront"); // Drivebase
-        DcMotor fr = hardwareMap.dcMotor.get("rightFront"); // Drivebase
-        DcMotor bl = hardwareMap.dcMotor.get("leftRear"); // Drivebase
-        DcMotor br = hardwareMap.dcMotor.get("rightRear"); // Drivebase
+        fl = hardwareMap.dcMotor.get("leftFront"); // Drivebase
+        fr = hardwareMap.dcMotor.get("rightFront"); // Drivebase
+        bl = hardwareMap.dcMotor.get("leftRear"); // Drivebase
+        br = hardwareMap.dcMotor.get("rightRear"); // Drivebase
 
-        DcMotor leftSlide = hardwareMap.dcMotor.get("frontEncoder"); // Slides
-        DcMotor rightSlide = hardwareMap.dcMotor.get("Right Slide"); // Slides
-        DcMotor Intake = hardwareMap.dcMotor.get("leftEncoder"); //Pixel Intake
+        leftSlide = hardwareMap.dcMotor.get("frontEncoder"); // Slides
+        rightSlide = hardwareMap.dcMotor.get("Right Slide"); // Slides
+        Intake = hardwareMap.dcMotor.get("leftEncoder"); //Pixel Intake
 
-        DRV4BL = hardwareMap.servo.get("leftV4B"); //Virtual Four Bar Servos // Left Side
-        DRV4BR = hardwareMap.servo.get("rightV4B"); //Virtual Four Bar Servos //Right Side
-        launchPlane = hardwareMap.servo.get("launcher");
-        out1 = hardwareMap.servo.get("leftOut"); //Outtake
-        out2 = hardwareMap.servo.get("rightOut"); //Outtake
+        leftSlide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        rightSlide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         AHRS imu = AHRS.getInstance(hardwareMap.get(NavxMicroNavigationSensor.class, "navx"), AHRS.DeviceDataType.kProcessedData);
 
@@ -86,6 +83,8 @@ public class ImpastaCommandTeleOp extends CommandOpMode {
         mechanism.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER)
                 .whenPressed(new InstantCommand(() -> impasta.reset()));
 
+        impasta.resetSlide();
+
         telemetry.addLine("Initialization Done");
         telemetry.update();
     }
@@ -100,11 +99,12 @@ public class ImpastaCommandTeleOp extends CommandOpMode {
             gamepad1.rumble(250); // Angle recalibrated
         }
 
+        impasta.intake(gamepad1.left_trigger - gamepad1.right_trigger);
         mechanisms.resetSlides();
 
         if (!pidActive) {
             impasta.runManual(gamepad2.right_stick_y);
-            telemetry.addLine("Lift Position: " + impasta.getPosition());
+            telemetry.addLine("Lift Position: " + leftSlide.getCurrentPosition());
         }
 
         mechanisms.airplaneLauncher();

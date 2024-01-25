@@ -24,12 +24,14 @@ public class SlidePIDTest extends LinearOpMode {
 
         impasta = new Impasta(leftSlide, rightSlide);
 
+        impasta.resetSlide();
+
         waitForStart();
 
         if (isStopRequested()) return;
 
         while (opModeIsActive()) {
-            double pos = impasta.getSlidesPos();
+            double pos = leftSlide.getCurrentPosition();
             telemetry.addData("Pos: ", pos);
             telemetry.update();
 
