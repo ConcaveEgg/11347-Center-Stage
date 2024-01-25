@@ -8,7 +8,7 @@ import org.firstinspires.ftc.teamcode.subsystems.Slides;
 
 public class SlidesResetCommand extends CommandBase {
     private final Slides slides;
-    private final GamepadEx mechanisms;
+    private final GamepadEx mechanisms; // comment
 
     public SlidesResetCommand(Slides slides, GamepadEx mechanisms) {
         addRequirements(slides);
