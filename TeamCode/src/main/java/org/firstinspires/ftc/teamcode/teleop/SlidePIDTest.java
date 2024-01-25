@@ -34,13 +34,13 @@ public class SlidePIDTest extends LinearOpMode {
             telemetry.update();
 
             if (gamepad2.dpad_down && !impasta.atLower()) {
-                impasta.runToPos(0);
+                impasta.runPID(0);
             } else if (gamepad2.dpad_left) {
-                impasta.runToPos(150);
+                impasta.runPID(150);
             } else if (gamepad2.dpad_right) {
-                impasta.runToPos(300);
+                impasta.runPID(300);
             } else if (gamepad2.dpad_up && !impasta.atUpper()) {
-                impasta.runToPos(450);
+                impasta.runPID(450);
             } else {
                 impasta.setSlidesPower(gamepad2.left_stick_y);
             }

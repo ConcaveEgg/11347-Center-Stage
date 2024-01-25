@@ -16,8 +16,7 @@ import org.firstinspires.ftc.teamcode.subsystems.Impasta;
 public class ImpastaTeleOp extends LinearOpMode {
     // Declaring hardware variables
     private DcMotor fl, fr, bl, br, leftSlide, rightSlide, Intake;
-    private Servo out1, out2, launchPlane, aimLauncher;
-    private Servo DRV4BL, DRV4BR;
+    private Servo out1, out2, launchPlane, DRV4BL, DRV4BR;
     private DistanceSensor leftSensor;
     private DistanceSensor rightSensor;
     private AHRS imu;
@@ -84,106 +83,67 @@ public class ImpastaTeleOp extends LinearOpMode {
                 gamepad1.rumble(2000);
             }
 
+            if (gamepad2.left_bumper || gamepad1.right_bumper) {
+                impasta.resetSlide();
+            }
+
             if (gamepad2.dpad_down && !impasta.atLower()) {
-                impasta.runToPos(0);
+                impasta.runPID(0);
             } else if (gamepad2.dpad_left) {
-                impasta.runToPos(150);
+                impasta.runPID(150);
             } else if (gamepad2.dpad_right) {
-                impasta.runToPos(300);
+                impasta.runPID(300);
             } else if (gamepad2.dpad_up && !impasta.atUpper()) {
-                impasta.runToPos(450);
+                impasta.runPID(450);
             } else {
                 impasta.setSlidesPower(gamepad2.left_stick_y);
             }
 
             telemetry.addLine("Left Slide Pos: " + leftSlide.getCurrentPosition());
-            telemetry.update();
 
-//            //TODO Test Airplane Aim
+            //TODO Test Airplane Aim
             if (gamepad2.triangle) {
                 launchPlane.setPosition(0);
             } else if (gamepad2.square) {
                 launchPlane.setPosition(1);
             }
-//
-//            current = aimLauncher.getPosition();
-//            if (gamepad2.dpad_up) {
-//                aimLauncher.setPosition(current + 0.1);
-//            } else if (gamepad2.dpad_down) {
-//                aimLauncher.setPosition(current - 0.1);
-//            }
-
-            // Controlling the Resting/Scoring state of the Virtual Four Bar
-//            if (gamepad2.circle) {
-//                // Rotate the CR servos clockwise as long as the button is pressed
-//                while (gamepad2.circle) {
-//                    DRV4BL.setPower(1.0);  // Adjust the power as needed
-//                    DRV4BR.setPower(1.0);  // Adjust the power as needed
-//                }
-//                // Stop the servos when the button is released
-//                DRV4BL.setPower(0);
-//                DRV4BR.setPower(0);
-//
-//            } else if (gamepad2.cross) {
-//                // Rotate the CR servos counterclockwise as long as the button is pressed
-//                while (gamepad2.cross) {
-//                    DRV4BL.setPower(-1.0);  // Adjust the power as needed
-//                    DRV4BR.setPower(-1.0);  // Adjust the power as needed
-//                }
-//                // Stop the servos when the button is released
-//                DRV4BL.setPower(0);
-//                DRV4BR.setPower(0);
-//
-//            }
 
             if (gamepad2.circle) {
-                DRV4BL.setPosition(0.5);
-                DRV4BR.setPosition(0.5);
+                DRV4BL.setPosition(0.65);
+                DRV4BR.setPosition(0.65);
             } else if (gamepad2.cross) {
                 DRV4BL.setPosition(0);
                 DRV4BR.setPosition(0);
             }
-
-            telemetry.addLine("right" + DRV4BR.getPosition() + "\n left" + DRV4BL.getPosition());
-            telemetry.update();
-
-//            ElapsedTime time = new ElapsedTime();
-//            double servoCurrentR = DRV4BR.getPosition();
-//            double servoCurrentL = DRV4BL.getPosition();
-//            DRV4BR.setPosition(0.01 * (time.seconds() + 1) * gamepad2.right_stick_y + servoCurrentR);
-//            DRV4BL.setPosition(0.01 * (time.seconds() + 1) * gamepad2.right_stick_y + servoCurrentL);
-//            time.reset();
-//
-//            telemetry.addLine("LeftServoPos: " + DRV4BR.getPo());
-//            telemetry.addLine("RightServoPos: " + DRV4BL.getPosition());
-//            telemetry.update();
 
             if (gamepad1.dpad_left) {
                 doDetectDistance = !doDetectDistance;
             }
 
             // Outtake switches between scoring and rest position based on button press //Swap later
-            if (gamepad2.left_trigger > 0.3 || DetectDistance() <= distance) {
+            if (gamepad2.left_trigger > 0.3 /*|| DetectDistance() <= distance*/) {
                 gamepad1.rumble(1000);
                 out1.setPosition(0.75); // left //lower
             } else {
                 out1.setPosition(0.55); // left //raise
             }
 
-            if (gamepad2.right_trigger > 0.3 || DetectDistance() <= distance) {
+            if (gamepad2.right_trigger > 0.3 /*|| DetectDistance() <= distance */) {
                 gamepad1.rumble(1000);
                 out2.setPosition(0.5); // right //lower
             } else {
                 out2.setPosition(0.6); // right //raise
             }
+
+            telemetry.update();
         }
     }
 
-    public double DetectDistance() {
-        double whatToDo;
-        if (doDetectDistance) {
-            whatToDo = leftSensor.getDistance(DistanceUnit.INCH);
-        } else {whatToDo = 10;}
-        return whatToDo;
-    }
+//    public double DetectDistance() {
+//        double whatToDo;
+//        if (doDetectDistance) {
+//            whatToDo = leftSensor.getDistance(DistanceUnit.INCH);
+//        } else {whatToDo = 10;}
+//        return whatToDo;
+//    }
 }

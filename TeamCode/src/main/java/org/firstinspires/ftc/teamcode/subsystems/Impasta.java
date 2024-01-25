@@ -1,17 +1,19 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.kauailabs.navx.ftc.AHRS;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.Servo;
 
+@Config
 public class Impasta {
     // Hardware variables
     private AHRS imu;
     private IMU.Parameters parameters;
     private DcMotor fl, fr, bl, br, leftSlide, rightSlide, Intake;
     private Servo leftOut, rightOut, leftV4B, rightV4B;
-    private PID pid = new PID(0.5, 0, 0);
+    private PID pid = new PID(1, 0, 0);
 
     private boolean leftOutRaised = true;
     private boolean rightOutRaised = true;
@@ -34,15 +36,10 @@ public class Impasta {
         fr.setDirection(DcMotor.Direction.REVERSE);
         br.setDirection(DcMotor.Direction.REVERSE);
 
-//         Initializing IMU parameters
-//        parameters = new IMU.Parameters(
-//                new RevHubOrientationOnRobot(
-//                        RevHubOrientationOnRobot.LogoFacingDirection.LEFT,
-//                        RevHubOrientationOnRobot.UsbFacingDirection.DOWN
-//                )
-//        );
-//
-//        imu.initialize(parameters);
+        leftSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        leftSlide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        rightSlide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
 
     public Impasta(DcMotor leftSlide, DcMotor rightSlide) {
@@ -51,7 +48,6 @@ public class Impasta {
     }
 
     public Impasta(DcMotor fl, DcMotor fr, DcMotor bl, DcMotor br, DcMotor leftSlide, DcMotor rightSlide, DcMotor Intake) {
-        // Assigning hardware references to local variables
         this.fl = fl;
         this.fr = fr;
         this.bl = bl;
@@ -65,7 +61,6 @@ public class Impasta {
     }
 
     public Impasta(DcMotor fl, DcMotor fr, DcMotor bl, DcMotor br, DcMotor leftSlide, DcMotor rightSlide, DcMotor Intake, Servo leftOut, Servo rightOut, Servo leftV4B, Servo rightV4b) {
-        // Assigning hardware references to local variables
         this.fl = fl;
         this.fr = fr;
         this.bl = bl;
@@ -82,19 +77,8 @@ public class Impasta {
         br.setDirection(DcMotor.Direction.REVERSE);
     }
 
-//        parameters = new IMU.Parameters(
-//                new RevHubOrientationOnRobot(
-//                        RevHubOrientationOnRobot.LogoFacingDirection.LEFT,
-//                        RevHubOrientationOnRobot.UsbFacingDirection.DOWN
-//                )
-//        );
-//
-//        imu.initialize(parameters);
-
     // Method to reset IMU yaw angle
     public void reset() {
-//        imu.resetYaw();
-//        imu.close()
         imu.zeroYaw();
     }
 
@@ -141,23 +125,38 @@ public class Impasta {
     }
 
     //Slide Control via power
+
+
+//  ================================================ Slide Stuff ================================================
+
     public void setSlidesPower(double power) {
-        leftSlide.setPower(-power);
-        rightSlide.setPower(power);
+        leftSlide.setPower(-power - 0.11);
+        rightSlide.setPower(power + 0.11);
+    }
+
+    public void runManual(double dr4bp) {
+        leftSlide.setPower(-dr4bp * 0.65 - 0.11);
+        rightSlide.setPower(dr4bp * 0.65 + 0.11);
     }
 
     public double getSlidesPos() {
         return leftSlide.getCurrentPosition();
     }
 
-    public void runToPos(double targetPos) {
-        double currentPos = getSlidesPos();
-        int output = pid.update(currentPos, targetPos);
-        leftSlide.setTargetPosition(output);
-        leftSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        rightSlide.setTargetPosition(-output);
-        rightSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+    public void runPID(double targetPos) {
+        double output = pid.update(leftSlide.getCurrentPosition(), targetPos) + 0.11;
+        leftSlide.setPower(output);
+        rightSlide.setPower(-output);
     }
+
+    public void resetSlide() {
+        leftSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        leftSlide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        rightSlide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+    }
+
+    public double getPosition() {return rightSlide.getCurrentPosition();}
 
     public boolean atUpper() {
         return getSlidesPos() > 600;
@@ -166,6 +165,8 @@ public class Impasta {
     public boolean atLower() {
         return getSlidesPos() < 5;
     }
+
+//  =============================================================================================================
 
     public void toggleLeftOut() {
         if (leftOutRaised) {

@@ -53,12 +53,12 @@ public class RedFar extends CommandOpMode {
         TrajectorySequence propFarRightRed = drive.trajectorySequenceBuilder(startPoseFarRed)
                 .forward(25)
                 .lineToLinearHeading(new Pose2d(-32.6, -30.5, Math.toRadians(0)))
-                .build()
+                .build();
 
 
         TrajectorySequence scoreFarMidRed = drive.trajectorySequenceBuilder(propFarMidRed.end())
                .forward(81)
-               .strafeRight(backBoard-3)
+//               .strafeRight(backBoard-3)
                .build();
 //         TrajectorySequence scoreFarRightRed = drive.trajectorySequenceBuilder(propFarRightRed.end())
 //                .forward(81)
