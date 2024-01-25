@@ -22,6 +22,7 @@ public class ImpastaTeleOp extends LinearOpMode {
     private DistanceSensor rightSensor;
     private AHRS imu;
     private double up, down, current, distance;
+    private boolean doDetectDistance;
     Impasta impasta;
 
     @Override
@@ -49,6 +50,7 @@ public class ImpastaTeleOp extends LinearOpMode {
 //        rightSensor = hardwareMap.get(DistanceSensor.class, "rightSensor");
 
         distance = 1;
+        doDetectDistance = false;
 
         imu = AHRS.getInstance(hardwareMap.get(NavxMicroNavigationSensor.class, "navx"), AHRS.DeviceDataType.kProcessedData);
 
@@ -94,6 +96,9 @@ public class ImpastaTeleOp extends LinearOpMode {
                 impasta.setSlidesPower(gamepad2.left_stick_y);
             }
 
+            telemetry.addLine("Left Slide Pos: " + leftSlide.getCurrentPosition());
+            telemetry.update();
+
 //            //TODO Test Airplane Aim
             if (gamepad2.triangle) {
                 launchPlane.setPosition(0);
@@ -132,8 +137,8 @@ public class ImpastaTeleOp extends LinearOpMode {
 //            }
 
             if (gamepad2.circle) {
-                DRV4BL.setPosition(180);
-                DRV4BR.setPosition(180);
+                DRV4BL.setPosition(0.5);
+                DRV4BR.setPosition(0.5);
             } else if (gamepad2.cross) {
                 DRV4BL.setPosition(0);
                 DRV4BR.setPosition(0);
@@ -153,20 +158,32 @@ public class ImpastaTeleOp extends LinearOpMode {
 //            telemetry.addLine("RightServoPos: " + DRV4BL.getPosition());
 //            telemetry.update();
 
+            if (gamepad1.dpad_left) {
+                doDetectDistance = !doDetectDistance;
+            }
+
             // Outtake switches between scoring and rest position based on button press //Swap later
-            if (gamepad2.left_trigger > 0.3 /* || leftSensor.getDistance(DistanceUnit.INCH)<=distance */) {
+            if (gamepad2.left_trigger > 0.3 || DetectDistance() <= distance) {
                 gamepad1.rumble(1000);
                 out1.setPosition(0.75); // left //lower
             } else {
                 out1.setPosition(0.55); // left //raise
             }
 
-            if (gamepad2.right_trigger > 0.3 /* || rightSensor.getDistance(DistanceUnit.INCH)<=distance */) {
+            if (gamepad2.right_trigger > 0.3 || DetectDistance() <= distance) {
                 gamepad1.rumble(1000);
                 out2.setPosition(0.5); // right //lower
             } else {
                 out2.setPosition(0.6); // right //raise
             }
         }
+    }
+
+    public double DetectDistance() {
+        double whatToDo;
+        if (doDetectDistance) {
+            whatToDo = leftSensor.getDistance(DistanceUnit.INCH);
+        } else {whatToDo = 10;}
+        return whatToDo;
     }
 }
