@@ -9,7 +9,7 @@ import org.firstinspires.ftc.robotcore.internal.system.Deadline;
 
 import java.util.concurrent.TimeUnit;
 
-@Autonomous(name = "Sensor: HuskyLens", group = "Sensor")
+@Autonomous(name = "Sensor: HuskyLens-Blue", group = "Sensor")
 public class HuskyLensTestBlue extends LinearOpMode {
 
     private final int READ_PERIOD = 1;
@@ -43,27 +43,31 @@ public class HuskyLensTestBlue extends LinearOpMode {
 
             HuskyLens.Block[] blocks = huskyLens.blocks();
 
-            if (blocks.length > 0) {
+            if (blocks.length == 1) {
                 telemetry.addData("Objects Detected: ", blocks.length);
                 for (int i = 0; i < blocks.length; i++) {
-                    telemetry.addData("Object " + (i + 1) + ": ", blocks[i].toString());
+                    if (blocks[i].id == 1) {
+                        telemetry.addData("Object " + (i + 1) + ": ", blocks[i].toString());
 
-                    // Determine which section the object is in based on its X-coordinate
-                    int xCoordinate = blocks[i].x;
+                        // Determine which section the object is in based on its X-coordinate
+                        int xCoordinate = blocks[i].x;
+                        int yCoordinate = blocks[i].y;
 
-                    // Calculate section boundaries
-                    int sectionWidth = 320 / 3; // Assuming horizontal screen resolution is 320
+                        // Calculate section boundaries
+                        int sectionWidth = 320 / 3; // Because horizontal screen resolution is 320
+                        int cropHeight = 50;
 
-                    // Determine the section
-                    String section;
-                    if (xCoordinate < sectionWidth + 30) {
-                        section = "Left";
-                    } else if (xCoordinate < 2 * sectionWidth) {
-                        section = "Middle";
-                    } else {
-                        section = "Right";
+                        // Determine the section
+                        String section;
+                        if (xCoordinate < sectionWidth && yCoordinate > cropHeight) {
+                            section = "LEFT";
+                        } else if (xCoordinate < 2 * sectionWidth && yCoordinate > cropHeight) {
+                            section = "Middle";
+                        } else {
+                            section = "RIGHT";
+                        }
+                        telemetry.addData("Object Section: ", section);
                     }
-                    telemetry.addData("Object Section: ", section);
                 }
             } else {
                 telemetry.addLine("RIGHT");
