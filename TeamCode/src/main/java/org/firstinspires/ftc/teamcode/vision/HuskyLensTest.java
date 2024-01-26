@@ -28,7 +28,7 @@ public class HuskyLensTest extends LinearOpMode {
             telemetry.addData(">>", "Press start to continue");
         }
 
-        huskyLens.selectAlgorithm(HuskyLens.Algorithm.OBJECT_RECOGNITION);
+        huskyLens.selectAlgorithm(HuskyLens.Algorithm.COLOR_RECOGNITION);
 
         telemetry.addLine("Initialized");
         telemetry.update();
@@ -45,15 +45,30 @@ public class HuskyLensTest extends LinearOpMode {
 
             if (blocks.length > 0) {
                 telemetry.addData("Objects Detected: ", blocks.length);
-                telemetry.update();
                 for (int i = 0; i < blocks.length; i++) {
                     telemetry.addData("Object " + (i + 1) + ": ", blocks[i].toString());
-                    telemetry.update();
+
+                    // Determine which section the object is in based on its X-coordinate
+                    int xCoordinate = blocks[i].x;
+
+                    // Calculate section boundaries
+                    int sectionWidth = 320 / 3; // Assuming horizontal screen resolution is 320
+
+                    // Determine the section
+                    String section;
+                    if (xCoordinate < sectionWidth) {
+                        section = "Left";
+                    } else if (xCoordinate < 2 * sectionWidth) {
+                        section = "Middle";
+                    } else {
+                        section = "Right";
+                    }
+                    telemetry.addData("Object Section: ", section);
                 }
             } else {
-                telemetry.addLine("No Object Detected");
-                telemetry.update();
+                telemetry.addLine("RIGHT");
             }
+
             telemetry.update();
         }
     }
