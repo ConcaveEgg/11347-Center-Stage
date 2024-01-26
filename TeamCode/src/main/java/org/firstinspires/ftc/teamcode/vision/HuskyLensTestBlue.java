@@ -14,6 +14,8 @@ public class HuskyLensTestBlue extends LinearOpMode {
 
     private final int READ_PERIOD = 1;
     private HuskyLens huskyLens;
+    private String whereToPlace;
+    private String section;
 
     @Override
     public void runOpMode() {
@@ -33,6 +35,47 @@ public class HuskyLensTestBlue extends LinearOpMode {
         telemetry.addLine("Initialized");
         telemetry.update();
 
+        while (opModeInInit()) {
+            if (!rateLimit.hasExpired()) {
+                continue;
+            }
+            rateLimit.reset();
+
+            HuskyLens.Block[] blocks = huskyLens.blocks();
+
+            if (blocks.length > 0) {
+                telemetry.addData("Objects Detected: ", blocks.length);
+                for (int i = 0; i < blocks.length; i++) {
+                    telemetry.addData("Object " + (i + 1) + ": ", blocks[i].toString());
+
+                    // Determine which section the object is in based on its X-coordinate
+                    int xCoordinate = blocks[i].x;
+                    int yCoordinate = blocks[i].y;
+
+                    // Calculate section boundaries
+                    int sectionWidth = 320 / 3; // Because horizontal screen resolution is 320
+                    int cropHeight = 50;
+
+                    // Determine the section
+                    if (xCoordinate < sectionWidth && yCoordinate > cropHeight) {
+                        section = "LEFT";
+                    } else if (xCoordinate < 2 * sectionWidth && yCoordinate > cropHeight) {
+                        section = "Middle";
+                    } else {
+                        section = "RIGHT";
+                    }
+                    telemetry.addData("Blue Object Section: ", section);
+                }
+            } else {
+                section = "RIGHT";
+                telemetry.addLine("RIGHT");
+            }
+
+            telemetry.addLine("\n\n Where To Place: " + whereToPlace);
+
+            telemetry.update();
+        }
+
         waitForStart();
 
         while (opModeIsActive()) {
@@ -43,35 +86,18 @@ public class HuskyLensTestBlue extends LinearOpMode {
 
             HuskyLens.Block[] blocks = huskyLens.blocks();
 
-            if (blocks.length == 1) {
+            if (blocks.length > 0) {
                 telemetry.addData("Objects Detected: ", blocks.length);
                 for (int i = 0; i < blocks.length; i++) {
-                    if (blocks[i].id == 1) {
-                        telemetry.addData("Object " + (i + 1) + ": ", blocks[i].toString());
-
-                        // Determine which section the object is in based on its X-coordinate
-                        int xCoordinate = blocks[i].x;
-                        int yCoordinate = blocks[i].y;
-
-                        // Calculate section boundaries
-                        int sectionWidth = 320 / 3; // Because horizontal screen resolution is 320
-                        int cropHeight = 50;
-
-                        // Determine the section
-                        String section;
-                        if (xCoordinate < sectionWidth && yCoordinate > cropHeight) {
-                            section = "LEFT";
-                        } else if (xCoordinate < 2 * sectionWidth && yCoordinate > cropHeight) {
-                            section = "Middle";
-                        } else {
-                            section = "RIGHT";
-                        }
-                        telemetry.addData("Object Section: ", section);
+                    if (blocks[i].id == 2) {
+                        whereToPlace = section;
                     }
                 }
             } else {
                 telemetry.addLine("RIGHT");
             }
+
+            telemetry.addLine("\n\n Where To Place: " + whereToPlace);
 
             telemetry.update();
         }
