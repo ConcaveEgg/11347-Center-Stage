@@ -156,8 +156,6 @@ public class Impasta {
         rightSlide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
-    public double getPosition() {return rightSlide.getCurrentPosition();}
-
     public boolean atUpper() {
         return getSlidesPos() > 600;
     }

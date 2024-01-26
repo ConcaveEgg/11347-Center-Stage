@@ -24,7 +24,7 @@ public class SlidePID extends CommandBase {
 
     @Override
     public boolean isFinished() {
-        return Math.abs(impasta.getPosition() - target) < 25;
+        return Math.abs(impasta.getSlidesPos() - target) < 25;
     }
 
     @Override

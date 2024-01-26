@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.vision;
 
 import com.qualcomm.hardware.dfrobot.HuskyLens;
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -8,7 +9,7 @@ import org.firstinspires.ftc.robotcore.internal.system.Deadline;
 
 import java.util.concurrent.TimeUnit;
 
-@TeleOp(name = "Sensor: HuskyLens", group = "Sensor")
+@Autonomous(name = "Sensor: HuskyLens", group = "Sensor")
 public class HuskyLensTest extends LinearOpMode {
 
     private final int READ_PERIOD = 1;

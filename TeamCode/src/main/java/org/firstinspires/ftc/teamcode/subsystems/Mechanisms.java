@@ -55,10 +55,4 @@ public class Mechanisms extends SubsystemBase {
             out2.setPosition(0.6); // right //raise
         }
     }
-
-    public void resetSlides() {
-        if (gamepad2.left_bumper || gamepad1.right_bumper) {
-            impasta.resetSlide();
-        }
-    }
 }
