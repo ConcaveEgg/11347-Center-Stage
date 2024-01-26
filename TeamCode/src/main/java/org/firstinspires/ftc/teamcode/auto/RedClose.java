@@ -58,20 +58,26 @@ public class RedClose extends CommandOpMode {
             telemetry.addLine("Waiting For Start...");
         }
 
-       TrajectorySequence propCloseMidRed = drive.trajectorySequenceBuilder(startPoseCloseRed)
+        TrajectorySequence propCloseLeftRed = drive.trajectorySequenceBuilder(startPoseCloseRed)
                 .forward(25)
+                .turn(Math.toRadians(90))
+                .forward(11)
+                .back(11)
                 .lineToLinearHeading(new Pose2d(12, -62, 0))
                 .build();
-
-        TrajectorySequence propCloseLeftRed = drive.trajectorySequenceBuilder(startPoseCloseRed)
-                .lineToLinearHeading(new Pose2d(12, -38, Math.toRadians(125)))
-                .back(3)
+        TrajectorySequence scoreCloseLeftRed = drive.trajectorySequenceBuilder(propCloseLeftRed.end())
+                .forward(34)
+                .strafeLeft(24)
                 .build();
 
-        TrajectorySequence propCloseRightRed = drive.trajectorySequenceBuilder(startPoseCloseRed)
-                .lineToLinearHeading(new Pose2d(12, -38, Math.toRadians(35)))
-                .forward(2)
-                .back(5)
+        TrajectorySequence parkCloseLeftRed = drive.trajectorySequenceBuilder(scoreCloseLeftRed.end())
+                .strafeRight(24)
+                .forward(12)
+                .build();;
+
+        TrajectorySequence propCloseMidRed = drive.trajectorySequenceBuilder(startPoseCloseRed)
+                .forward(25)
+                .lineToLinearHeading(new Pose2d(12, -62, 0))
                 .build();
 
         TrajectorySequence scoreCloseMidRed = drive.trajectorySequenceBuilder(propCloseMidRed.end())
@@ -81,6 +87,24 @@ public class RedClose extends CommandOpMode {
 
         TrajectorySequence parkCloseMidRed = drive.trajectorySequenceBuilder(scoreCloseMidRed.end())
                 .strafeRight(25)
+                .forward(12)
+                .build();
+
+        TrajectorySequence propCloseRightRed = drive.trajectorySequenceBuilder(startPoseCloseRed)
+                .forward(25)
+                .turn(Math.toRadians(-90))
+                .forward(11)
+                .back(11)
+                .strafeRight(25)
+                .build();
+
+        TrajectorySequence scoreCloseRightRed = drive.trajectorySequenceBuilder(propCloseRightRed.end())
+                .forward(34)
+                .strafeLeft(12)
+                .build();
+
+        TrajectorySequence parkCloseRightRed = drive.trajectorySequenceBuilder(scoreCloseRightRed.end())
+                .strafeRight(12)
                 .forward(12)
                 .build();
 
