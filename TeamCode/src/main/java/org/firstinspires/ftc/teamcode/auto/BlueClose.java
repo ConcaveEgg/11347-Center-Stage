@@ -30,6 +30,10 @@ public class BlueClose extends CommandOpMode {
     private final int READ_PERIOD = 1;
     private HuskyLens huskyLens;
 
+    TrajectorySequence prop;
+    TrajectorySequence score;
+    TrajectorySequence park;
+
     public static Pose2d startPoseCloseBlue = new Pose2d(12,62, Math.toRadians(-90));
     String section;
 
@@ -72,10 +76,12 @@ public class BlueClose extends CommandOpMode {
                 .forward(25)
                 .lineToLinearHeading(new Pose2d(12, 62, 0))
                 .build();
+
         TrajectorySequence scoreCloseMidBlue = drive.trajectorySequenceBuilder(propCloseMidBlue.end())
                 .forward(34)
                 .strafeRight(19)
                 .build();
+
         TrajectorySequence parkCloseMidBlue = drive.trajectorySequenceBuilder(scoreCloseMidBlue.end())
                 .strafeLeft(25)
                 .forward(12)
@@ -97,7 +103,65 @@ public class BlueClose extends CommandOpMode {
         TrajectorySequence parkCloseRightBlue = drive.trajectorySequenceBuilder(scoreCloseRightBlue.end())
                 .strafeLeft(24)
                 .forward(12)
-                .build();;
+                .build();
+
+        while (opModeInInit()) {
+            if (!rateLimit.hasExpired()) {
+                continue;
+            }
+            rateLimit.reset();
+
+            HuskyLens.Block[] blocks = huskyLens.blocks();
+
+            if (blocks.length > 0) {
+                telemetry.addData("Objects Detected: ", blocks.length);
+                for (int i = 0; i < blocks.length; i++) {
+                    if (blocks[i].id == 1) { //If blue, then detect
+                        telemetry.addData("Object " + (i + 1) + ": ", blocks[i].toString());
+
+                        // Determine which section the object is in based on its X-coordinate
+                        int xCoordinate = blocks[i].x;
+                        int yCoordinate = blocks[i].y;
+
+                        // Calculate section boundaries
+                        int sectionWidth = 320 / 3; // Because horizontal screen resolution is 320
+                        int cropHeight = 50;
+
+                        // Determine the section
+                        if (xCoordinate < sectionWidth && yCoordinate > cropHeight) {
+                            section = "LEFT";
+                        } else if (xCoordinate < 2 * sectionWidth && yCoordinate > cropHeight) {
+                            section = "MIDDLE";
+                        } else {
+                            section = "RIGHT";
+                        }
+                        telemetry.addData("Object Section: ", section);
+                    } else { //No objects detected or only red objects detected
+                        section = "RIGHT";
+                        telemetry.addLine("Default - RIGHT");
+                    }
+                }
+            }
+            telemetry.update();
+        }
+
+        telemetry.addLine("START - Section is " + section);
+        telemetry.update();
+
+        switch(section) {
+            case "LEFT":
+                prop = propCloseLeftBlue;
+                score = scoreCloseLeftBlue;
+                park = parkCloseLeftBlue;
+            case "MIDDLE":
+                prop = propCloseMidBlue;
+                score = scoreCloseMidBlue;
+                park = parkCloseMidBlue;
+            default:
+                prop = propCloseRightBlue;
+                score = scoreCloseRightBlue;
+                park = parkCloseRightBlue;
+        }
 
 //        schedule(new SequentialCommandGroup ( //Makes the following code run one after another, like norma
 //            new ParallelCommandGroup(
@@ -123,12 +187,12 @@ public class BlueClose extends CommandOpMode {
 //        ));
 
         schedule(new SequentialCommandGroup(
-//                new TrajectorySequenceCommand(drive, propCloseMidBlue),
-                new InstantCommand(() -> {
-                    s.runToPos(Slides.SlidePos.LOW.position);
-                })
-//                new TrajectorySequenceCommand(drive, scoreCloseMidBlue),
-//                new TrajectorySequenceCommand(drive, parkCloseMidBlue)
+                new TrajectorySequenceCommand(drive, prop),
+//                new InstantCommand(() -> {
+//                    s.runToPos(Slides.SlidePos.LOW.position);
+//                })
+                new TrajectorySequenceCommand(drive, score),
+                new TrajectorySequenceCommand(drive, park)
         ));
     }
 }
