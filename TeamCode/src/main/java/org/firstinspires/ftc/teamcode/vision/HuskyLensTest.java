@@ -56,7 +56,7 @@ public class HuskyLensTest extends LinearOpMode {
 
                     // Determine the section
                     String section;
-                    if (xCoordinate < sectionWidth) {
+                    if (xCoordinate < sectionWidth + 30) {
                         section = "Left";
                     } else if (xCoordinate < 2 * sectionWidth) {
                         section = "Middle";
