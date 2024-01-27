@@ -211,4 +211,17 @@ public class Impasta {
         return rightOut.getPosition();
     }
 
+    public void driveBaseAuto(double x) {
+        double denominator = Math.max(Math.abs(0) + Math.abs(x) + Math.abs(0), 1);
+
+        double flpwr = (0 + x + 0) / denominator;
+        double blpwr = (0 - x + 0) / denominator;
+        double frpwr = (0 - x - 0) / denominator;
+        double brpwr = (0 + x - 0) / denominator;
+
+        fl.setPower(flpwr);
+        bl.setPower(blpwr);
+        fr.setPower(frpwr);
+        br.setPower(brpwr);
+    }
 }
