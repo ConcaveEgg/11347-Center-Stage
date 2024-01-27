@@ -4,59 +4,54 @@ import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.arcrobotics.ftclib.command.CommandOpMode;
 import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
-import com.arcrobotics.ftclib.gamepad.GamepadEx;
+import com.qualcomm.hardware.dfrobot.HuskyLens;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.Gamepad;
 
+import org.firstinspires.ftc.robotcore.internal.system.Deadline;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
-import org.firstinspires.ftc.teamcode.subsystems.Impasta;
 import org.firstinspires.ftc.teamcode.subsystems.Outtake;
 import org.firstinspires.ftc.teamcode.subsystems.V4B;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 import org.firstinspires.ftc.teamcode.subsystems.Slides;
 
+import java.util.concurrent.TimeUnit;
 
-@Autonomous(name="Red Close")
+
+@Autonomous(name="Red Close", group="Close")
 public class RedClose extends CommandOpMode {
     //Add Motors and servos not for drivebase here
     SampleMecanumDrive drive;
-    Impasta bot;
-    GamepadEx gamepad;
+    Slides s;
+    Outtake o;
+    V4B v4b;
+    Gamepad gamepad;
+    private final int READ_PERIOD = 1;
+    private HuskyLens huskyLens;
 
-    private DcMotor fl, fr, bl, br, leftSlide, rightSlide, Winch, Intake;
-    private Servo out1, out2, launchPlane, aimLauncher;
-    private Servo DRV4BL, DRV4BR;
+    TrajectorySequence prop;
+    TrajectorySequence score;
+    TrajectorySequence park;
 
-    public static Pose2d startPoseCloseRed = new Pose2d(12,-62, Math.toRadians(90));
+    public static Pose2d startPoseCloseRed = new Pose2d(12,62, Math.toRadians(-90));
+    String section;
 
     @Override
     public void initialize() {
         drive = new SampleMecanumDrive(hardwareMap);
-        fl = hardwareMap.dcMotor.get("leftFront"); //Drivebase
-        fr = hardwareMap.dcMotor.get("rightFront"); //Drivebase
-        bl = hardwareMap.dcMotor.get("leftRear"); //Drivebase
-        br = hardwareMap.dcMotor.get("rightRear"); //Drivebase
+        s = new Slides(hardwareMap);
+        o = new Outtake(gamepad, hardwareMap);
+        v4b = new V4B(hardwareMap);
+        huskyLens = hardwareMap.get(HuskyLens.class, "huskylens");
 
-        leftSlide = hardwareMap.dcMotor.get("frontEncoder"); //Slides
-        rightSlide = hardwareMap.dcMotor.get("Right Slide"); //Slides
+        Deadline rateLimit = new Deadline(READ_PERIOD, TimeUnit.SECONDS);
+        rateLimit.expire();
 
-        Intake = hardwareMap.dcMotor.get("leftEncoder"); //Pixel Intake
-
-        DRV4BL = hardwareMap.servo.get("leftV4B"); //Virtual Four Bar Servos // Left Side
-        DRV4BR = hardwareMap.servo.get("rightV4B"); //Virtual Four Bar Servos //Right Side
-
-        launchPlane = hardwareMap.servo.get("launcher");
-
-        out1 = hardwareMap.servo.get("leftOut"); //Outtake
-        out2 = hardwareMap.servo.get("rightOut"); //Outtake
-
-        bot = new Impasta(fl, fr, bl, br, leftSlide, rightSlide, Intake, out1, out2, DRV4BL, DRV4BR);
-
-
-        while (!isStarted() && !isStopRequested()) {
-            telemetry.addLine("Waiting For Start...");
+        if (!huskyLens.knock()) {
+            telemetry.addData(">>", "Problem communicating with " + huskyLens.getDeviceName());
+            telemetry.update();
         }
+        huskyLens.selectAlgorithm(HuskyLens.Algorithm.COLOR_RECOGNITION);
 
         TrajectorySequence propCloseLeftRed = drive.trajectorySequenceBuilder(startPoseCloseRed)
                 .forward(25)
@@ -108,6 +103,67 @@ public class RedClose extends CommandOpMode {
                 .forward(12)
                 .build();
 
+        while (opModeInInit()) {
+            if (!rateLimit.hasExpired()) {
+                continue;
+            }
+            rateLimit.reset();
+
+            HuskyLens.Block[] blocks = huskyLens.blocks();
+
+            if (blocks.length > 0) {
+                telemetry.addData("Objects Detected: ", blocks.length);
+                for (int i = 0; i < blocks.length; i++) {
+                    if (blocks[i].id == 1) { //If blue, then detect
+                        telemetry.addData("Object " + (i + 1) + ": ", blocks[i].toString());
+
+                        // Determine which section the object is in based on its X-coordinate
+                        int xCoordinate = blocks[i].x;
+                        int yCoordinate = blocks[i].y;
+
+                        // Calculate section boundaries
+                        int sectionWidth = 320 / 3; // Because horizontal screen resolution is 320
+                        int cropHeight = 50;
+
+                        // Determine the section
+                        if (xCoordinate < sectionWidth && yCoordinate > cropHeight) {
+                            section = "LEFT";
+                        } else if (xCoordinate < 2 * sectionWidth && yCoordinate > cropHeight) {
+                            section = "MIDDLE";
+                        } else {
+                            section = "RIGHT";
+                        }
+                        telemetry.addData("Object Section: ", section);
+                    } else { //No objects detected or only red objects detected
+                        section = "RIGHT";
+                        telemetry.addLine("Default - RIGHT");
+                    }
+                }
+            }
+            telemetry.update();
+        }
+
+        telemetry.addLine("START - Section is " + section);
+        telemetry.update();
+
+        switch(section) {
+            case "LEFT":
+                prop = propCloseLeftRed;
+                score = scoreCloseLeftRed;
+                park = parkCloseLeftRed;
+                break;
+            case "MIDDLE":
+                prop = propCloseMidRed;
+                score = scoreCloseMidRed;
+                park = parkCloseMidRed;
+                break;
+            default:
+                prop = propCloseRightRed;
+                score = scoreCloseRightRed;
+                park = parkCloseRightRed;
+                break;
+        }
+
 //        schedule(new SequentialCommandGroup ( //Makes the following code run one after another, like norma
 //            new ParallelCommandGroup(
 //                new SequentialCommandGroup(
@@ -132,11 +188,12 @@ public class RedClose extends CommandOpMode {
 //        ));
 
         schedule(new SequentialCommandGroup(
-//                new TrajectorySequenceCommand(drive, propCloseMidRed),
-                new InstantCommand(() -> {
-                })
-//                new TrajectorySequenceCommand(drive, scoreCloseMidRed),
-//                new TrajectorySequenceCommand(drive, parkCloseMidRed)
+                new TrajectorySequenceCommand(drive, prop),
+//                new InstantCommand(() -> {
+//                    s.runToPos(Slides.SlidePos.LOW.position);
+//                })
+                new TrajectorySequenceCommand(drive, score),
+                new TrajectorySequenceCommand(drive, park)
         ));
     }
 }

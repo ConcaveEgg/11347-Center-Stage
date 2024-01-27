@@ -3,26 +3,25 @@ package org.firstinspires.ftc.teamcode.subsystems;
 import com.arcrobotics.ftclib.command.SubsystemBase;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
+import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.ServoImplEx;
 
 public class    Outtake extends SubsystemBase {
 
-    private static final double L_OPEN_POS = 0.7;
-    private static final double L_CLOSED_POS = 0.4;
-    private static final double R_OPEN_POS = 0.4;
-    private static final double R_CLOSED_POS = 0.6;
-    private ServoImplEx leftOuttake;
-    private ServoImplEx rightOuttake;   
-    private GamepadEx gamepad;
+    private static final double L_OPEN_POS = 0.75;
+    private static final double L_CLOSED_POS = 0.55;
+    private static final double R_OPEN_POS = 0.6;
+    private static final double R_CLOSED_POS = 0.5;
+    private Servo leftOuttake, rightOuttake;
+    private Gamepad gamepad;
 
-    public Outtake(GamepadEx gamepad, HardwareMap hardwareMap) {
-        leftOuttake = hardwareMap.get(ServoImplEx.class, "leftOut");
-        rightOuttake = hardwareMap.get(ServoImplEx.class, "rightOut");
+    public Outtake(Gamepad gamepad, HardwareMap hardwareMap) {
+        leftOuttake = hardwareMap.get(Servo.class, "leftOut");
+        rightOuttake = hardwareMap.get(Servo.class, "rightOut");
 
         this.gamepad = gamepad;
-
-        resetPosition();
     }
 
     public void open() {
@@ -35,16 +34,19 @@ public class    Outtake extends SubsystemBase {
         rightOuttake.setPosition(R_CLOSED_POS);
     }
 
-    public void resetPosition() {
-       //Needs implementation
-    }
-
     public void update() {
-        // Add any real-time updates or controls here
-        if (gamepad.getButton(GamepadKeys.Button.DPAD_UP)) {
-            open();
-        } else if (gamepad.getButton(GamepadKeys.Button.DPAD_DOWN)) {
-            close();
+        if (gamepad.left_trigger > 0.3 /*|| DetectDistance() <= distance*/) {
+            gamepad.rumble(1000);
+            leftOuttake.setPosition(0.75); // left //lower
+        } else {
+            leftOuttake.setPosition(0.55); // left //raise
+        }
+
+        if (gamepad.right_trigger > 0.3 /*|| DetectDistance() <= distance */) {
+            gamepad.rumble(1000);
+            rightOuttake.setPosition(0.5); // right //lower
+        } else {
+            rightOuttake.setPosition(0.6); // right //raise
         }
     }
 }

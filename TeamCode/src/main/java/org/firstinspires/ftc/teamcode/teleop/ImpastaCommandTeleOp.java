@@ -38,7 +38,6 @@ public class ImpastaCommandTeleOp extends CommandOpMode {
     public void initialize() {
         // Initializing hardware
         GamepadEx mechanism = new GamepadEx(gamepad2);
-        GamepadEx goofy = new GamepadEx(gamepad2);
 
         fl = hardwareMap.dcMotor.get("leftFront"); // Drivebase
         fr = hardwareMap.dcMotor.get("rightFront"); // Drivebase
@@ -93,7 +92,7 @@ public class ImpastaCommandTeleOp extends CommandOpMode {
     @Override
     public void run(){
         super.run();
-        impasta.driveBaseField(gamepad1.left_stick_y, -gamepad1.left_stick_x * 1.1, -gamepad1.right_stick_x);
+        impasta.driveBaseField(-gamepad1.left_stick_y, gamepad1.left_stick_x * 1.1, -gamepad1.right_stick_x);
 
         if (gamepad1.left_bumper || gamepad1.right_bumper) {
             impasta.reset();

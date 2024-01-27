@@ -4,12 +4,13 @@ import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.arcrobotics.ftclib.command.CommandOpMode;
 import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
-import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.qualcomm.hardware.dfrobot.HuskyLens;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.hardware.Gamepad;
 
 import org.firstinspires.ftc.robotcore.internal.system.Deadline;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
+import org.firstinspires.ftc.teamcode.subsystems.Impasta;
 import org.firstinspires.ftc.teamcode.subsystems.Outtake;
 import org.firstinspires.ftc.teamcode.subsystems.Slides;
 import org.firstinspires.ftc.teamcode.subsystems.V4B;
@@ -18,14 +19,14 @@ import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 import java.util.concurrent.TimeUnit;
 
 
-@Autonomous(name="Blue Close")
+@Autonomous(name="Blue Close", group="Close")
 public class BlueClose extends CommandOpMode {
     //Add Motors and servos not for drivebase here
     SampleMecanumDrive drive;
     Slides s;
     Outtake o;
     V4B v4b;
-    GamepadEx gamepad;
+    Gamepad gamepad;
 
     private final int READ_PERIOD = 1;
     private HuskyLens huskyLens;
@@ -34,7 +35,7 @@ public class BlueClose extends CommandOpMode {
     TrajectorySequence score;
     TrajectorySequence park;
 
-    public static Pose2d startPoseCloseBlue = new Pose2d(12,62, Math.toRadians(-90));
+    public static Pose2d startPoseCloseBlue = new Pose2d(12,62, Math.toRadians(0));
     String section;
 
     @Override
@@ -141,6 +142,8 @@ public class BlueClose extends CommandOpMode {
                         telemetry.addLine("Default - RIGHT");
                     }
                 }
+            } else {
+                section = "MIDDLE";
             }
             telemetry.update();
         }
@@ -153,14 +156,17 @@ public class BlueClose extends CommandOpMode {
                 prop = propCloseLeftBlue;
                 score = scoreCloseLeftBlue;
                 park = parkCloseLeftBlue;
+                break;
             case "MIDDLE":
                 prop = propCloseMidBlue;
                 score = scoreCloseMidBlue;
                 park = parkCloseMidBlue;
+                break;
             default:
                 prop = propCloseRightBlue;
                 score = scoreCloseRightBlue;
                 park = parkCloseRightBlue;
+                break;
         }
 
 //        schedule(new SequentialCommandGroup ( //Makes the following code run one after another, like norma
@@ -187,7 +193,7 @@ public class BlueClose extends CommandOpMode {
 //        ));
 
         schedule(new SequentialCommandGroup(
-                new TrajectorySequenceCommand(drive, prop),
+                new TrajectorySequenceCommand(drive, propCloseLeftBlue),
 //                new InstantCommand(() -> {
 //                    s.runToPos(Slides.SlidePos.LOW.position);
 //                })

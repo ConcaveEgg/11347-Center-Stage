@@ -7,6 +7,7 @@ import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
+import com.qualcomm.robotcore.hardware.Gamepad;
 
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.subsystems.Outtake;
@@ -22,7 +23,7 @@ public class RedFar extends CommandOpMode {
     Slides s;
     Outtake o;
     V4B v4b;
-    GamepadEx gamepad;
+    Gamepad gamepad;
 
     public static Pose2d startPoseFarRed = new Pose2d(12,-62, Math.toRadians(90));
 
@@ -102,7 +103,7 @@ public class RedFar extends CommandOpMode {
         schedule(new SequentialCommandGroup(
 //                new TrajectorySequenceCommand(drive, propCFarMidRed),
                 new InstantCommand(() -> {
-                        s.runToPos(Slides.SlidePos.LOW.position);
+                        s.runPID(Slides.SlidePos.LOW.position);
                 })
 //                new TrajectorySequenceCommand(drive, scoreFarMidRed),
 //                new TrajectorySequenceCommand(drive, parkFarMidRed)

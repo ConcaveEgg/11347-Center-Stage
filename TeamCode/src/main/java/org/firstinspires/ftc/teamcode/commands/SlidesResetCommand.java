@@ -34,6 +34,6 @@ public class SlidesResetCommand extends CommandBase {
     @Override
     public void end(boolean interrupted){
         slides.stop();
-        slides.resetSlidePos();
+        slides.resetSlide();
     }
 }
