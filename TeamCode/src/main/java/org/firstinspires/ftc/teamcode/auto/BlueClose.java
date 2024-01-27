@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.auto;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.arcrobotics.ftclib.command.CommandOpMode;
 import com.arcrobotics.ftclib.command.InstantCommand;
+import com.arcrobotics.ftclib.command.ParallelCommandGroup;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 import com.qualcomm.hardware.dfrobot.HuskyLens;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
@@ -35,7 +36,7 @@ public class BlueClose extends CommandOpMode {
     TrajectorySequence score;
     TrajectorySequence park;
 
-    public static Pose2d startPoseCloseBlue = new Pose2d(12,62, Math.toRadians(0));
+    public static Pose2d startPoseCloseBlue = new Pose2d(12,62, Math.toRadians(-90));
     String section;
 
     @Override
@@ -54,6 +55,8 @@ public class BlueClose extends CommandOpMode {
             telemetry.update();
         }
         huskyLens.selectAlgorithm(HuskyLens.Algorithm.COLOR_RECOGNITION);
+
+        drive.setPoseEstimate(startPoseCloseBlue);
 
         TrajectorySequence propCloseLeftBlue = drive.trajectorySequenceBuilder(startPoseCloseBlue)
                 .forward(25)
@@ -193,12 +196,18 @@ public class BlueClose extends CommandOpMode {
 //        ));
 
         schedule(new SequentialCommandGroup(
-                new TrajectorySequenceCommand(drive, propCloseLeftBlue),
-//                new InstantCommand(() -> {
-//                    s.runToPos(Slides.SlidePos.LOW.position);
+                new ParallelCommandGroup(
+                        new SequentialCommandGroup(
+                                new TrajectorySequenceCommand(drive, propCloseLeftBlue),
+//
+                                new TrajectorySequenceCommand(drive, score),
+                                new TrajectorySequenceCommand(drive, park)
+                        )
+//                    new InstantCommand(() -> {
+//                  s.runToPos(Slides.SlidePos.LOW.position);
 //                })
-                new TrajectorySequenceCommand(drive, score),
-                new TrajectorySequenceCommand(drive, park)
+                )
+
         ));
     }
 }

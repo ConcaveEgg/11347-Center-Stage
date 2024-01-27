@@ -83,7 +83,7 @@ public class SampleMecanumDrive extends MecanumDrive {
         }
 
         // TODO: adjust the names of the following hardware devices to match your configuration
-        imu = AHRS.getInstance(hardwareMap.get(NavxMicroNavigationSensor.class, "navx"), AHRS.DeviceDataType.kProcessedData);
+//        imu = AHRS.getInstance(hardwareMap.get(NavxMicroNavigationSensor.class, "navx"), AHRS.DeviceDataType.kProcessedData);
 
         leftFront = hardwareMap.get(DcMotorEx.class, "leftFront"); //expansionHub slot 2
         leftRear = hardwareMap.get(DcMotorEx.class, "leftRear"); //expansionHub slot 3
