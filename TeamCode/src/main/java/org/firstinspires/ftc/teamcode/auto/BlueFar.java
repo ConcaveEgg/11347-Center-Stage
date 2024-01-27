@@ -2,25 +2,22 @@ package org.firstinspires.ftc.teamcode.auto;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.arcrobotics.ftclib.command.CommandOpMode;
-import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
-import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.qualcomm.hardware.dfrobot.HuskyLens;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.hardware.Gamepad;
 
 import org.firstinspires.ftc.robotcore.internal.system.Deadline;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.subsystems.Outtake;
+import org.firstinspires.ftc.teamcode.subsystems.Slides;
 import org.firstinspires.ftc.teamcode.subsystems.V4B;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
-import org.firstinspires.ftc.teamcode.subsystems.Slides;
 
 import java.util.concurrent.TimeUnit;
 
-@Autonomous(name="Red Far",group="Far")
-public class RedFar extends CommandOpMode {
+@Autonomous(name="Blue Far",group="Far")
+public class BlueFar extends CommandOpMode {
     //Add Motors and servos not for drivebase here
     SampleMecanumDrive drive;
     Slides s;
@@ -35,7 +32,7 @@ public class RedFar extends CommandOpMode {
     TrajectorySequence score;
     TrajectorySequence park;
 
-    public static Pose2d startPoseFarRed = new Pose2d(-35,-62, Math.toRadians(90));
+    public static Pose2d startPoseFarBlue = new Pose2d(-35,62, Math.toRadians(90));
     String section;
 
     @Override
@@ -55,52 +52,57 @@ public class RedFar extends CommandOpMode {
         }
         huskyLens.selectAlgorithm(HuskyLens.Algorithm.COLOR_RECOGNITION);
 
-       TrajectorySequence propFarMidRed = drive.trajectorySequenceBuilder(startPoseFarRed)
+       TrajectorySequence propFarMidBlue = drive.trajectorySequenceBuilder(startPoseFarBlue)
                 .forward(25)
-                .lineToLinearHeading(new Pose2d(-35.6, -32, Math.toRadians(90)))
+                .lineToLinearHeading(new Pose2d(-35.6, 32, Math.toRadians(270)))
                 .back(6)
-                .strafeLeft(15)
+                .strafeRight(15)
                 .forward(31.3)
                 .build();
 
-        TrajectorySequence propFarLeftRed =  drive.trajectorySequenceBuilder(startPoseFarRed)
+        TrajectorySequence propFarRightBlue =  drive.trajectorySequenceBuilder(startPoseFarBlue)
                 .forward(25)
-                .lineToLinearHeading(new Pose2d(-36.6, -30.5, Math.toRadians(180)))
+                .lineToLinearHeading(new Pose2d(-36.6, 30.5, Math.toRadians(180)))
+                .back(5)
+                .lineToLinearHeading(new Pose2d(-32.6, 30.5, Math.toRadians(0)))
+
                 .build();
 
-        TrajectorySequence propFarRightRed = drive.trajectorySequenceBuilder(startPoseFarRed)
+        TrajectorySequence propFarLeftBlue = drive.trajectorySequenceBuilder(startPoseFarBlue)
                 .forward(25)
-                .lineToLinearHeading(new Pose2d(-32.6, -30.5, Math.toRadians(0)))
+                .lineToLinearHeading(new Pose2d(-32.6, 30.5, Math.toRadians(0)))
+                .back(5)
+                .lineToLinearHeading(new Pose2d(-32.6, 30.5, Math.toRadians(0)))
                 .build();
 
 
-        TrajectorySequence scoreFarLeftRed = drive.trajectorySequenceBuilder(propFarMidRed.end())
+        TrajectorySequence scoreFarLeftBlue = drive.trajectorySequenceBuilder(propFarMidBlue.end())
                .forward(81)
-               .strafeRight(backBoard)
+               .strafeLeft(backBoard)
                .build();
-        TrajectorySequence scoreFarMidRed = drive.trajectorySequenceBuilder(propFarMidRed.end())
+        TrajectorySequence scoreFarMidBlue = drive.trajectorySequenceBuilder(propFarMidBlue.end())
                 .forward(81)
-                .strafeRight(backBoard-3)
+                .strafeLeft(backBoard-3)
                 .build();
-         TrajectorySequence scoreFarRightRed = drive.trajectorySequenceBuilder(propFarRightRed.end())
+         TrajectorySequence scoreFarRightBlue = drive.trajectorySequenceBuilder(propFarRightBlue.end())
                 .forward(81)
-                .strafeRight(backBoard+3)
+                .strafeLeft(backBoard+3)
                 .build();
 
-        TrajectorySequence parkFarLeftRed = drive.trajectorySequenceBuilder(scoreFarLeftRed.end())
+        TrajectorySequence parkFarLeftBlue = drive.trajectorySequenceBuilder(scoreFarLeftBlue.end())
                 .back(4)
-                .lineToLinearHeading(new Pose2d(46.0, -11.6, Math.toRadians(0)))
+                .lineToLinearHeading(new Pose2d(46.0, 11.6, Math.toRadians(0)))
                 .forward(10)
                 .build();
 
-        TrajectorySequence parkFarMidRed = drive.trajectorySequenceBuilder(scoreFarMidRed.end())
+        TrajectorySequence parkFarMidBlue = drive.trajectorySequenceBuilder(scoreFarMidBlue.end())
                 .back(4)
-                .lineToLinearHeading(new Pose2d(46.0, -11.6, Math.toRadians(0)))
+                .lineToLinearHeading(new Pose2d(46.0, 11.6, Math.toRadians(0)))
                 .forward(10)
                 .build();
-        TrajectorySequence parkFarRightRed = drive.trajectorySequenceBuilder(scoreFarMidRed.end())
+        TrajectorySequence parkFarRightBlue = drive.trajectorySequenceBuilder(scoreFarMidBlue.end())
                 .back(4)
-                .lineToLinearHeading(new Pose2d(46.0, -11.6, Math.toRadians(0)))
+                .lineToLinearHeading(new Pose2d(46.0, 11.6, Math.toRadians(0)))
                 .forward(10)
                 .build();
 
@@ -149,28 +151,28 @@ public class RedFar extends CommandOpMode {
 
         switch(section) {
             case "LEFT":
-                prop = propFarLeftRed;
-                score = scoreFarLeftRed;
-                park = parkFarLeftRed;
+                prop = propFarLeftBlue;
+                score = scoreFarLeftBlue;
+                park = parkFarLeftBlue;
                 break;
             case "MIDDLE":
-                prop = propFarMidRed;
-                score = scoreFarMidRed;
-                park = parkFarMidRed;
+                prop = propFarMidBlue;
+                score = scoreFarMidBlue;
+                park = parkFarMidBlue;
                 break;
             default:
-                prop = propFarRightRed;
-                score = scoreFarRightRed;
-                park = parkFarRightRed;
+                prop = propFarRightBlue;
+                score = scoreFarRightBlue;
+                park = parkFarRightBlue;
                 break;
         }
 
 //        schedule(new SequentialCommandGroup ( //Makes the following code run one after another, like norma
 //            new ParallelCommandGroup(
 //                new SequentialCommandGroup(
-//                    new TrajectorySequenceCommand(drive, propFarMidRed),
-//                    new TrajectorySequenceCommand(drive, scoreFarMidRed),
-//                    new TrajectorySequenceCommand(drive, parkFarMidRed)
+//                    new TrajectorySequenceCommand(drive, propFarMidBlue),
+//                    new TrajectorySequenceCommand(drive, scoreFarMidBlue),
+//                    new TrajectorySequenceCommand(drive, parkFarMidBlue)
 //                ),
 //                new InstantCommand(() -> {
 //                    new WaitCommand(4000);
@@ -193,8 +195,8 @@ public class RedFar extends CommandOpMode {
 //                new InstantCommand(() -> {
 //                        s.runPID(Slides.SlidePos.LOW.position);
 //                })
-              new TrajectorySequenceCommand(drive, scoreFarMidRed),
-               new TrajectorySequenceCommand(drive, parkFarMidRed)
+              new TrajectorySequenceCommand(drive, scoreFarMidBlue),
+               new TrajectorySequenceCommand(drive, parkFarMidBlue)
         ));
     }
 }
