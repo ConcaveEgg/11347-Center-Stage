@@ -40,7 +40,7 @@ public class BlueFar extends CommandOpMode {
         drive = new SampleMecanumDrive(hardwareMap);
         s = new Slides(hardwareMap);
         o = new Outtake(gamepad, hardwareMap);
-        v4b = new V4B(hardwareMap);
+//        v4b = new V4B(hardwareMap);
         huskyLens = hardwareMap.get(HuskyLens.class, "huskylens");
 
         Deadline rateLimit = new Deadline(READ_PERIOD, TimeUnit.SECONDS);
@@ -51,8 +51,10 @@ public class BlueFar extends CommandOpMode {
             telemetry.update();
         }
         huskyLens.selectAlgorithm(HuskyLens.Algorithm.COLOR_RECOGNITION);
+        drive.setPoseEstimate(startPoseFarBlue);
 
-       TrajectorySequence propFarMidBlue = drive.trajectorySequenceBuilder(startPoseFarBlue)
+
+        TrajectorySequence propFarMidBlue = drive.trajectorySequenceBuilder(startPoseFarBlue)
                 .forward(25)
                 .lineToLinearHeading(new Pose2d(-35.6, 32, Math.toRadians(270)))
                 .back(6)

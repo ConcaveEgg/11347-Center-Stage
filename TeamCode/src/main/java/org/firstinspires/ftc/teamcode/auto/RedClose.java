@@ -53,6 +53,8 @@ public class RedClose extends CommandOpMode {
         }
         huskyLens.selectAlgorithm(HuskyLens.Algorithm.COLOR_RECOGNITION);
 
+        drive.setPoseEstimate(startPoseCloseRed);
+
         TrajectorySequence propCloseLeftRed = drive.trajectorySequenceBuilder(startPoseCloseRed)
                 .forward(25)
                 .turn(Math.toRadians(90))
@@ -114,7 +116,7 @@ public class RedClose extends CommandOpMode {
             if (blocks.length > 0) {
                 telemetry.addData("Objects Detected: ", blocks.length);
                 for (int i = 0; i < blocks.length; i++) {
-                    if (blocks[i].id == 1) { //If blue, then detect
+                    if (blocks[i].id == 2) { //If red, then detect
                         telemetry.addData("Object " + (i + 1) + ": ", blocks[i].toString());
 
                         // Determine which section the object is in based on its X-coordinate

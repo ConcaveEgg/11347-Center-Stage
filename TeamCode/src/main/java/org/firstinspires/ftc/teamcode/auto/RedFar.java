@@ -55,8 +55,10 @@ public class RedFar extends CommandOpMode {
         }
         huskyLens.selectAlgorithm(HuskyLens.Algorithm.COLOR_RECOGNITION);
 
-       TrajectorySequence propFarMidRed = drive.trajectorySequenceBuilder(startPoseFarRed)
-                .forward(25)
+        drive.setPoseEstimate(startPoseFarRed);
+
+        TrajectorySequence propFarMidRed = drive.trajectorySequenceBuilder(startPoseFarRed)
+                .forward(37)
                 .lineToLinearHeading(new Pose2d(-35.6, -32, Math.toRadians(90)))
                 .back(6)
                 .strafeLeft(15)
@@ -115,7 +117,7 @@ public class RedFar extends CommandOpMode {
             if (blocks.length > 0) {
                 telemetry.addData("Objects Detected: ", blocks.length);
                 for (int i = 0; i < blocks.length; i++) {
-                    if (blocks[i].id == 1) { //If blue, then detect
+                    if (blocks[i].id == 2) { //If red, then detect
                         telemetry.addData("Object " + (i + 1) + ": ", blocks[i].toString());
 
                         // Determine which section the object is in based on its X-coordinate
