@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.Auto;
+package org.firstinspires.ftc.teamcode.auto;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.arcrobotics.ftclib.command.CommandOpMode;
@@ -174,7 +174,7 @@ public class RedClose2plus2 extends CommandOpMode {
                 score = scoreCloseMidRed;
                 park = parkCloseMidRed;
                 intakeIt = getPixel;
-                scorePlus = ;
+//                scorePlus = ;  No idea wtf ur trying to do
                 break;
             default:
                 prop = propCloseRightRed;
@@ -222,7 +222,7 @@ public class RedClose2plus2 extends CommandOpMode {
                     new WaitCommand(1000);
                     i.forceStop();
 
-                })
+                }),
                 new TrajectorySequenceCommand(drive, andScore)
 
         ));
