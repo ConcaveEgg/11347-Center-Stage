@@ -2,7 +2,9 @@ package org.firstinspires.ftc.teamcode.Auto;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.arcrobotics.ftclib.command.CommandOpMode;
+import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
+import com.arcrobotics.ftclib.command.WaitCommand;
 import com.qualcomm.hardware.dfrobot.HuskyLens;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.hardware.Gamepad;
@@ -32,6 +34,8 @@ public class RedClose2plus2 extends CommandOpMode {
 
     TrajectorySequence prop;
     TrajectorySequence score;
+    TrajectorySequence scorePlus;
+    TrajectorySequence intakeIt;
     TrajectorySequence park;
 
     public static Pose2d startPoseCloseRed = new Pose2d(12,62, Math.toRadians(-90));
@@ -82,10 +86,13 @@ public class RedClose2plus2 extends CommandOpMode {
                 .forward(34)
                 .strafeLeft(19)
                 .build();
-        TrajectorySequence getPixelAndScore = drive.trajectorySequenceBuilder(scoreCloseMidRed.end())
+        TrajectorySequence getPixel = drive.trajectorySequenceBuilder(scoreCloseMidRed.end())
                 .lineToLinearHeading(new Pose2d(46.5, -10.9, Math.toRadians(180)))
                 .lineToLinearHeading(new Pose2d(-60, -10.9, Math.toRadians(180)))
+                .build();
                 //intake here(code this late)
+
+        TrajectorySequence andScore = drive.trajectorySequenceBuilder(scoreCloseMidRed.end())
                 .lineToLinearHeading(new Pose2d(46.5, -10.9, Math.toRadians(0)))
                 .lineToLinearHeading(new Pose2d(46.5, -36.3, Math.toRadians(0)))
                 .build();
@@ -166,6 +173,8 @@ public class RedClose2plus2 extends CommandOpMode {
                 prop = propCloseMidRed;
                 score = scoreCloseMidRed;
                 park = parkCloseMidRed;
+                intakeIt = getPixel;
+                scorePlus = ;
                 break;
             default:
                 prop = propCloseRightRed;
@@ -203,7 +212,19 @@ public class RedClose2plus2 extends CommandOpMode {
 //                    s.runToPos(Slides.SlidePos.LOW.position);
 //                })
                 new TrajectorySequenceCommand(drive, score),
-                new TrajectorySequenceCommand(drive, park)
+                new TrajectorySequenceCommand(drive, park),
+                new TrajectorySequenceCommand(drive, intakeIt),
+                new InstantCommand(() -> {
+                    i.autoIntake(30);//get better number
+                    new WaitCommand(3000);
+                    i.forceStop();
+                    i.autoIntake(-30);
+                    new WaitCommand(1000);
+                    i.forceStop();
+
+                })
+                new TrajectorySequenceCommand(drive, andScore)
+
         ));
     }
 }

@@ -22,6 +22,9 @@ public class Intake extends SubsystemBase {
         double power = gamepad.left_trigger - gamepad.right_trigger;
         intakeMotor.setPower(power);
     }
+    public void autoIntake(double p) {
+        intakeMotor.setPower(p);
+    }
 
     public void forceStop() {
         intakeMotor.setPower(0);
