@@ -13,8 +13,8 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.subsystems.Impasta;
 
-@Autonomous(name="Red Park", group="ParkOnly")
-public class WorkingAuto extends LinearOpMode {
+@Autonomous(name="Blue Park", group="ParkOnly")
+public class BluePark extends LinearOpMode {
     // Declaring hardware variables
     private DcMotor fl, fr, bl, br, leftSlide, rightSlide, Intake;
     private CRServo DRV4BL, DRV4BR;
@@ -58,7 +58,7 @@ public class WorkingAuto extends LinearOpMode {
         while (opModeIsActive()) {
             ElapsedTime runtime = new ElapsedTime();
             while (runtime.seconds() < 4.5 && opModeIsActive()) {
-                impasta.driveBaseAuto(0.5 * 1.1);
+                impasta.driveBaseAuto(-0.5 * 1.1);
                 telemetry.addData("Runtime", "%.2f seconds", runtime.seconds());
                 telemetry.update();
             }

@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
 import com.arcrobotics.ftclib.command.SubsystemBase;
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -9,11 +10,12 @@ import com.qualcomm.robotcore.hardware.Servo;
 public class Mechanisms extends SubsystemBase {
     Impasta impasta;
     private Gamepad gamepad1, gamepad2;
-    private Servo out1, out2, launchPlane, DRV4BL, DRV4BR;
+    private Servo out1, out2, launchPlane;
+    private CRServo DRV4BL, DRV4BR;
 
     public Mechanisms(Gamepad gamepad1, Gamepad gamepad2, HardwareMap hardwareMap) {
-        DRV4BL = hardwareMap.servo.get("leftV4B"); //Virtual Four Bar Servos // Left Side
-        DRV4BR = hardwareMap.servo.get("rightV4B"); //Virtual Four Bar Servos //Right Side
+        DRV4BL = hardwareMap.crservo.get("leftV4B"); //Virtual Four Bar Servos // Left Side
+        DRV4BR = hardwareMap.crservo.get("rightV4B"); //Virtual Four Bar Servos //Right Side
         launchPlane = hardwareMap.servo.get("launcher");
         out1 = hardwareMap.servo.get("leftOut"); //Outtake
         out2 = hardwareMap.servo.get("rightOut"); //Outtake
@@ -31,12 +33,34 @@ public class Mechanisms extends SubsystemBase {
     }
 
     public void v4b() {
+//        if (gamepad2.circle) {
+//            DRV4BL.setPosition(0.65);
+//            DRV4BR.setPosition(0.65);
+//        } else if (gamepad2.cross) {
+//            DRV4BL.setPosition(0);
+//            DRV4BR.setPosition(0);
+//        }
+
         if (gamepad2.circle) {
-            DRV4BL.setPosition(0.65);
-            DRV4BR.setPosition(0.65);
+            // Rotate the CR servos clockwise as long as the button is pressed
+            while (gamepad2.circle) {
+                DRV4BL.setPower(1.0);  // Adjust the power as needed
+                DRV4BR.setPower(1.0);  // Adjust the power as needed
+            }
+            // Stop the servos when the button is released
+            DRV4BL.setPower(0);
+            DRV4BR.setPower(0);
+
         } else if (gamepad2.cross) {
-            DRV4BL.setPosition(0);
-            DRV4BR.setPosition(0);
+            // Rotate the CR servos counterclockwise as long as the button is pressed
+            while (gamepad2.cross) {
+                DRV4BL.setPower(-1.0);  // Adjust the power as needed
+                DRV4BR.setPower(-1.0);  // Adjust the power as needed
+            }
+            // Stop the servos when the button is released
+            DRV4BL.setPower(0);
+            DRV4BR.setPower(0);
+
         }
     }
 

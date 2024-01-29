@@ -197,8 +197,8 @@ public class BlueFar extends CommandOpMode {
 //                new InstantCommand(() -> {
 //                        s.runPID(Slides.SlidePos.LOW.position);
 //                })
-              new TrajectorySequenceCommand(drive, scoreFarMidBlue),
-               new TrajectorySequenceCommand(drive, parkFarMidBlue)
+              new TrajectorySequenceCommand(drive, score),
+               new TrajectorySequenceCommand(drive, park)
         ));
     }
 }

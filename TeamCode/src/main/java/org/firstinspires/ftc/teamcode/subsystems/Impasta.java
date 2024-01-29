@@ -224,4 +224,18 @@ public class Impasta {
         fr.setPower(frpwr);
         br.setPower(brpwr);
     }
+
+    public void driveBaseAutoFar(double y) {
+        double denominator = Math.max(Math.abs(y) + Math.abs(0) + Math.abs(0), 1);
+
+        double flpwr = (y + 0 + 0) / denominator;
+        double blpwr = (y - 0 + 0) / denominator;
+        double frpwr = (y - 0 - 0) / denominator;
+        double brpwr = (y + 0 - 0) / denominator;
+
+        fl.setPower(flpwr);
+        bl.setPower(blpwr);
+        fr.setPower(frpwr);
+        br.setPower(brpwr);
+    }
 }

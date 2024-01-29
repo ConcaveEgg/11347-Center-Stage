@@ -198,7 +198,7 @@ public class BlueClose extends CommandOpMode {
         schedule(new SequentialCommandGroup(
                 new ParallelCommandGroup(
                         new SequentialCommandGroup(
-                                new TrajectorySequenceCommand(drive, propCloseLeftBlue),
+                                new TrajectorySequenceCommand(drive, prop),
                                 new TrajectorySequenceCommand(drive, score),
                                 new TrajectorySequenceCommand(drive, park)
                         )
