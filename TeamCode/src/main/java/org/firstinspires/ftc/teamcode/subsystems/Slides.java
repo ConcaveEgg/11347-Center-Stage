@@ -64,7 +64,7 @@ public class Slides extends SubsystemBase {
         return lMotor.getCurrentPosition();
     }
 
-    public void runPID(double targetPos) {
+    public void goToPosition(double targetPos) {
         double output = pid.update(lMotor.getCurrentPosition(), targetPos);
         lMotor.setPower(output);
         rMotor.setPower(-output);

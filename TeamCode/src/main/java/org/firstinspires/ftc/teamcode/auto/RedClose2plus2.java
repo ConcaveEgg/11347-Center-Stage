@@ -34,6 +34,7 @@ public class RedClose2plus2 extends CommandOpMode {
 
     TrajectorySequence prop;
     TrajectorySequence score;
+    TrajectorySequence parkAfter2;
     TrajectorySequence scorePlus;
     TrajectorySequence intakeIt;
     TrajectorySequence park;
@@ -84,7 +85,7 @@ public class RedClose2plus2 extends CommandOpMode {
 
         TrajectorySequence scoreCloseMidRed = drive.trajectorySequenceBuilder(propCloseMidRed.end())
                 .forward(34)
-                .strafeLeft(19)
+                .strafeLeft(25)
                 .build();
         TrajectorySequence getPixel = drive.trajectorySequenceBuilder(scoreCloseMidRed.end())
                 .lineToLinearHeading(new Pose2d(46.5, -10.9, Math.toRadians(180)))
@@ -94,14 +95,18 @@ public class RedClose2plus2 extends CommandOpMode {
 
         TrajectorySequence andScore = drive.trajectorySequenceBuilder(scoreCloseMidRed.end())
                 .lineToLinearHeading(new Pose2d(46.5, -10.9, Math.toRadians(0)))
-                .lineToLinearHeading(new Pose2d(46.5, -36.3, Math.toRadians(0)))
+                .lineToLinearHeading(new Pose2d(45.8, -10.9, Math.toRadians(0)))
+                .build();
+        TrajectorySequence parkFromScore = drive.trajectorySequenceBuilder(andScore.end())
+                .lineToLinearHeading(new Pose2d(46.5, -61.9, 0))
+                .forward(10)
                 .build();
 
         TrajectorySequence parkCloseMidRed = drive.trajectorySequenceBuilder(scoreCloseMidRed.end())
                 .strafeRight(25)
                 .forward(12)
                 .build();
-
+//
         TrajectorySequence propCloseRightRed = drive.trajectorySequenceBuilder(startPoseCloseRed)
                 .forward(25)
                 .turn(Math.toRadians(-90))
@@ -168,18 +173,26 @@ public class RedClose2plus2 extends CommandOpMode {
                 prop = propCloseLeftRed;
                 score = scoreCloseLeftRed;
                 park = parkCloseLeftRed;
+                intakeIt = getPixel;
+                scorePlus = andScore;
+                parkAfter2 = parkFromScore;
                 break;
             case "MIDDLE":
                 prop = propCloseMidRed;
                 score = scoreCloseMidRed;
                 park = parkCloseMidRed;
                 intakeIt = getPixel;
-//                scorePlus = ;  No idea wtf ur trying to do
+                scorePlus = andScore;
+                parkAfter2 = parkFromScore;
+
                 break;
             default:
                 prop = propCloseRightRed;
                 score = scoreCloseRightRed;
                 park = parkCloseRightRed;
+                intakeIt = getPixel;
+                scorePlus = andScore;
+                parkAfter2 = parkFromScore;
                 break;
         }
 
@@ -192,7 +205,7 @@ public class RedClose2plus2 extends CommandOpMode {
 //                ),
 //                new InstantCommand(() -> {
 //                    new WaitCommand(4000);
-//                    s.goToPosition(Slides.SlidePos.LOW);
+// /                   s.goToPosition(Slides.SlidePos.LOW);
 ////                    new WaitCommand(2000);
 ////                    v4b.togglePower();
 ////                    new WaitCommand(2000);
@@ -212,6 +225,19 @@ public class RedClose2plus2 extends CommandOpMode {
 //                    s.runToPos(Slides.SlidePos.LOW.position);
 //                })
                 new TrajectorySequenceCommand(drive, score),
+                new InstantCommand(() -> {
+                    new WaitCommand(20);
+                    s.goToPosition(70);
+                    new WaitCommand(200);
+                    v4b.togglePower();
+                    new WaitCommand(200);
+                    o.open();
+                    new WaitCommand(400);
+                    o.close();
+                    v4b.togglePower();
+                    new WaitCommand(200);
+                    s.goToPosition(50);
+                }),
                 new TrajectorySequenceCommand(drive, park),
                 new TrajectorySequenceCommand(drive, intakeIt),
                 new InstantCommand(() -> {
@@ -223,7 +249,22 @@ public class RedClose2plus2 extends CommandOpMode {
                     i.forceStop();
 
                 }),
-                new TrajectorySequenceCommand(drive, andScore)
+                new TrajectorySequenceCommand(drive, andScore),
+                new InstantCommand(() -> {
+                    new WaitCommand(20);
+                    s.goToPosition(70);
+                    new WaitCommand(200);
+                    v4b.togglePower();
+                    new WaitCommand(200);
+                    o.open();
+                    new WaitCommand(400);
+                    o.close();
+                    v4b.togglePower();
+                    new WaitCommand(200);
+                    s.goToPosition(50);
+                }),
+                new TrajectorySequenceCommand(drive, parkAfter2)
+
 
         ));
     }
