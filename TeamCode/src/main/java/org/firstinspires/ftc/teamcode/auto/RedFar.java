@@ -4,6 +4,7 @@ import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.arcrobotics.ftclib.command.CommandOpMode;
 import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
+import com.arcrobotics.ftclib.command.WaitCommand;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.qualcomm.hardware.dfrobot.HuskyLens;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
@@ -58,11 +59,10 @@ public class RedFar extends CommandOpMode {
         drive.setPoseEstimate(startPoseFarRed);
 
         TrajectorySequence propFarMidRed = drive.trajectorySequenceBuilder(startPoseFarRed)
-
                 .lineToLinearHeading(new Pose2d(-35.6, -32, Math.toRadians(90)))
                 .back(6)
                 .strafeLeft(15)
-                .lineToLinearHeading(new Pose2d(-51.6, -7.4, Math.toRadians(0)))
+                .lineToLinearHeading(new Pose2d(-50.6, -14, Math.toRadians(0)))
                 .build();
 
         TrajectorySequence propFarLeftRed =  drive.trajectorySequenceBuilder(startPoseFarRed)
@@ -77,34 +77,35 @@ public class RedFar extends CommandOpMode {
 
 
         TrajectorySequence scoreFarLeftRed = drive.trajectorySequenceBuilder(propFarMidRed.end())
-                .lineToLinearHeading(new Pose2d(47.4, -7.4, Math.toRadians(0)))
-                .strafeRight(backBoard-3)
-               .build();
+                .back(3)
+                .lineToLinearHeading(new Pose2d(-34, -14, Math.toRadians(0)))
+                .lineToLinearHeading(new Pose2d(46, -14, Math.toRadians(0)))
+                .strafeRight(14)
+                .build();
         TrajectorySequence scoreFarMidRed = drive.trajectorySequenceBuilder(propFarMidRed.end())
-                .lineToLinearHeading(new Pose2d(47.4, -7.4, Math.toRadians(0)))
-                .strafeRight(backBoard)
+                .lineToLinearHeading(new Pose2d(46, -14, Math.toRadians(0)))
+                .strafeRight(20)
                 .build();
          TrajectorySequence scoreFarRightRed = drive.trajectorySequenceBuilder(propFarRightRed.end())
-                .lineToLinearHeading(new Pose2d(47.4, -7.4, Math.toRadians(0)))
-                .strafeRight(backBoard+3)
-                .build();
+                 .back(3)
+                 .lineToLinearHeading(new Pose2d(-34, -14, Math.toRadians(0)))
+                 .lineToLinearHeading(new Pose2d(46, -14, Math.toRadians(0)))
+                 .strafeRight(25)
+                 .build();
 
         TrajectorySequence parkFarLeftRed = drive.trajectorySequenceBuilder(scoreFarLeftRed.end())
-                .back(4)
-                .lineToLinearHeading(new Pose2d(46.0, -11.6, Math.toRadians(0)))
-                .forward(10)
+                .strafeLeft(14)
+                .forward(14)
                 .build();
 
         TrajectorySequence parkFarMidRed = drive.trajectorySequenceBuilder(scoreFarMidRed.end())
-                .back(4)
-                .lineToLinearHeading(new Pose2d(46.0, -11.6, Math.toRadians(0)))
-                .forward(10)
+                .strafeLeft(20)
+                .forward(14)
                 .build();
 
         TrajectorySequence parkFarRightRed = drive.trajectorySequenceBuilder(scoreFarMidRed.end())
-                .back(4)
-                .lineToLinearHeading(new Pose2d(46.0, -11.6, Math.toRadians(0)))
-                .forward(10)
+                .strafeLeft(25)
+                .forward(14)
                 .build();
 
 
@@ -194,11 +195,21 @@ public class RedFar extends CommandOpMode {
 
         schedule(new SequentialCommandGroup(
               new TrajectorySequenceCommand(drive, prop),
-//                new InstantCommand(() -> {
-//                        s.runPID(Slides.SlidePos.LOW.position);
-//                })
-              new TrajectorySequenceCommand(drive, scoreFarMidRed),
-               new TrajectorySequenceCommand(drive, parkFarMidRed)
+              new TrajectorySequenceCommand(drive, score),
+                new InstantCommand(() -> {
+                    new WaitCommand(20);
+                    s.goToPosition(70);
+                    new WaitCommand(200);
+                    v4b.togglePower();
+                    new WaitCommand(200);
+                    o.open();
+                    new WaitCommand(400);
+                    o.close();
+                    v4b.togglePower();
+                    new WaitCommand(200);
+                    s.goToPosition(50);
+                }),
+               new TrajectorySequenceCommand(drive, park)
         ));
     }
 }

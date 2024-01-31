@@ -5,6 +5,7 @@ import com.arcrobotics.ftclib.command.CommandOpMode;
 import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.command.ParallelCommandGroup;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
+import com.arcrobotics.ftclib.command.WaitCommand;
 import com.qualcomm.hardware.dfrobot.HuskyLens;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.hardware.Gamepad;
@@ -44,7 +45,7 @@ public class BlueClose extends CommandOpMode {
         drive = new SampleMecanumDrive(hardwareMap);
         s = new Slides(hardwareMap);
         o = new Outtake(gamepad, hardwareMap);
-//        v4b = new V4B(hardwareMap);
+        v4b = new V4B(hardwareMap);
         huskyLens = hardwareMap.get(HuskyLens.class, "huskylens");
 
         Deadline rateLimit = new Deadline(READ_PERIOD, TimeUnit.SECONDS);
@@ -61,8 +62,8 @@ public class BlueClose extends CommandOpMode {
         TrajectorySequence propCloseLeftBlue = drive.trajectorySequenceBuilder(startPoseCloseBlue)
                 .forward(25)
                 .turn(Math.toRadians(90))
-                .forward(11)
-                .back(11)
+                .forward(3)
+                .back(3)
                 .strafeLeft(25)
                 .build();
 
@@ -72,18 +73,18 @@ public class BlueClose extends CommandOpMode {
                 .build();
 
         TrajectorySequence parkCloseLeftBlue = drive.trajectorySequenceBuilder(scoreCloseLeftBlue.end())
-                .strafeLeft(12)
-                .forward(12)
+                .strafeLeft(20)
+                .forward(20)
                 .build();
 
         TrajectorySequence propCloseMidBlue = drive.trajectorySequenceBuilder(startPoseCloseBlue)
-                .forward(25)
+                .forward(28)
                 .lineToLinearHeading(new Pose2d(12, 62, 0))
                 .build();
 
         TrajectorySequence scoreCloseMidBlue = drive.trajectorySequenceBuilder(propCloseMidBlue.end())
                 .forward(34)
-                .strafeRight(19)
+                .strafeRight(25)
                 .build();
 
         TrajectorySequence parkCloseMidBlue = drive.trajectorySequenceBuilder(scoreCloseMidBlue.end())
@@ -94,18 +95,18 @@ public class BlueClose extends CommandOpMode {
         TrajectorySequence propCloseRightBlue = drive.trajectorySequenceBuilder(startPoseCloseBlue)
                 .forward(25)
                 .turn(Math.toRadians(-90))
-                .forward(11)
-                .back(11)
+                .forward(4)
+                .back(4)
                 .lineToLinearHeading(new Pose2d(12, 62, 0))
                 .build();
 
         TrajectorySequence scoreCloseRightBlue = drive.trajectorySequenceBuilder(propCloseRightBlue.end())
                 .forward(34)
-                .strafeRight(12)
+                .strafeRight(30)
                 .build();
 
         TrajectorySequence parkCloseRightBlue = drive.trajectorySequenceBuilder(scoreCloseRightBlue.end())
-                .strafeLeft(24)
+                .strafeLeft(30)
                 .forward(12)
                 .build();
 
@@ -196,17 +197,24 @@ public class BlueClose extends CommandOpMode {
 //        ));
 
         schedule(new SequentialCommandGroup(
-                new ParallelCommandGroup(
-                        new SequentialCommandGroup(
-                                new TrajectorySequenceCommand(drive, prop),
-                                new TrajectorySequenceCommand(drive, score),
-                                new TrajectorySequenceCommand(drive, park)
-                        )
-//                    new InstantCommand(() -> {
-//                  s.runToPos(Slides.SlidePos.LOW.position);
-//                })
+                new TrajectorySequenceCommand(drive, prop),
+                new TrajectorySequenceCommand(drive, score),
+                new InstantCommand(() -> {
+                    new WaitCommand(20);
+                    s.goToPosition(70);
+                    new WaitCommand(200);
+                    v4b.togglePower();
+                    new WaitCommand(200);
+                    o.open();
+                    new WaitCommand(400);
+                    o.close();
+                    v4b.togglePower();
+                    new WaitCommand(200);
+                    s.goToPosition(50);
+                }),
+                new TrajectorySequenceCommand(drive, park)
                 )
 
-        ));
+        );
     }
 }

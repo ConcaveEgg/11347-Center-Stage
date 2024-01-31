@@ -48,7 +48,7 @@ public class RedClose2plus2 extends CommandOpMode {
         s = new Slides(hardwareMap);
         o = new Outtake(gamepad, hardwareMap);
         v4b = new V4B(hardwareMap);
-        i = new Intake(hardwareMap);
+        i = new Intake(gamepad1, hardwareMap);
         huskyLens = hardwareMap.get(HuskyLens.class, "huskylens");
 
         Deadline rateLimit = new Deadline(READ_PERIOD, TimeUnit.SECONDS);

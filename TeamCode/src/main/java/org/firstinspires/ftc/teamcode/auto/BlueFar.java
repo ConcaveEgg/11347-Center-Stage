@@ -2,7 +2,9 @@ package org.firstinspires.ftc.teamcode.auto;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.arcrobotics.ftclib.command.CommandOpMode;
+import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
+import com.arcrobotics.ftclib.command.WaitCommand;
 import com.qualcomm.hardware.dfrobot.HuskyLens;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.hardware.Gamepad;
@@ -40,7 +42,7 @@ public class BlueFar extends CommandOpMode {
         drive = new SampleMecanumDrive(hardwareMap);
         s = new Slides(hardwareMap);
         o = new Outtake(gamepad, hardwareMap);
-//        v4b = new V4B(hardwareMap);
+        v4b = new V4B(hardwareMap);
         huskyLens = hardwareMap.get(HuskyLens.class, "huskylens");
 
         Deadline rateLimit = new Deadline(READ_PERIOD, TimeUnit.SECONDS);
@@ -55,19 +57,15 @@ public class BlueFar extends CommandOpMode {
 
 
         TrajectorySequence propFarMidBlue = drive.trajectorySequenceBuilder(startPoseFarBlue)
-                .forward(25)
-                .lineToLinearHeading(new Pose2d(-35.6, 32, Math.toRadians(270)))
+                .lineToLinearHeading(new Pose2d(-35.6, 32, Math.toRadians(-90)))
                 .back(6)
                 .strafeRight(15)
-                .forward(31.3)
+                .lineToLinearHeading(new Pose2d(-50.6, 14, Math.toRadians(0)))
                 .build();
 
         TrajectorySequence propFarRightBlue =  drive.trajectorySequenceBuilder(startPoseFarBlue)
                 .forward(25)
                 .lineToLinearHeading(new Pose2d(-36.6, 30.5, Math.toRadians(180)))
-                .back(5)
-                .lineToLinearHeading(new Pose2d(-32.6, 30.5, Math.toRadians(0)))
-
                 .build();
 
         TrajectorySequence propFarLeftBlue = drive.trajectorySequenceBuilder(startPoseFarBlue)
@@ -79,33 +77,34 @@ public class BlueFar extends CommandOpMode {
 
 
         TrajectorySequence scoreFarLeftBlue = drive.trajectorySequenceBuilder(propFarMidBlue.end())
-               .forward(81)
-               .strafeLeft(backBoard)
+                .back(3)
+                .lineToLinearHeading(new Pose2d(-34, 14, Math.toRadians(0)))
+                .lineToLinearHeading(new Pose2d(46, 14, Math.toRadians(0)))
+                .strafeLeft(25)
                .build();
         TrajectorySequence scoreFarMidBlue = drive.trajectorySequenceBuilder(propFarMidBlue.end())
-                .forward(81)
-                .strafeLeft(backBoard-3)
+                .lineToLinearHeading(new Pose2d(46, 14, Math.toRadians(0)))
+                .strafeLeft(20)
                 .build();
          TrajectorySequence scoreFarRightBlue = drive.trajectorySequenceBuilder(propFarRightBlue.end())
-                .forward(81)
-                .strafeLeft(backBoard+3)
+                 .back(3)
+                 .lineToLinearHeading(new Pose2d(-34, 14, Math.toRadians(0)))
+                 .lineToLinearHeading(new Pose2d(46, 14, Math.toRadians(0)))
+                 .strafeLeft(14)
                 .build();
 
         TrajectorySequence parkFarLeftBlue = drive.trajectorySequenceBuilder(scoreFarLeftBlue.end())
-                .back(4)
-                .lineToLinearHeading(new Pose2d(46.0, 11.6, Math.toRadians(0)))
-                .forward(10)
+                .strafeRight(25)
+                .forward(14)
                 .build();
 
         TrajectorySequence parkFarMidBlue = drive.trajectorySequenceBuilder(scoreFarMidBlue.end())
-                .back(4)
-                .lineToLinearHeading(new Pose2d(46.0, 11.6, Math.toRadians(0)))
-                .forward(10)
+                .strafeRight(20)
+                .forward(14)
                 .build();
         TrajectorySequence parkFarRightBlue = drive.trajectorySequenceBuilder(scoreFarMidBlue.end())
-                .back(4)
-                .lineToLinearHeading(new Pose2d(46.0, 11.6, Math.toRadians(0)))
-                .forward(10)
+                .strafeRight(14)
+                .forward(14)
                 .build();
 
         while (opModeInInit()) {
@@ -194,10 +193,20 @@ public class BlueFar extends CommandOpMode {
 
         schedule(new SequentialCommandGroup(
               new TrajectorySequenceCommand(drive, prop),
-//                new InstantCommand(() -> {
-//                        s.runPID(Slides.SlidePos.LOW.position);
-//                })
               new TrajectorySequenceCommand(drive, score),
+                new InstantCommand(() -> {
+                    new WaitCommand(20);
+                    s.goToPosition(70);
+                    new WaitCommand(200);
+                    v4b.togglePower();
+                    new WaitCommand(200);
+                    o.open();
+                    new WaitCommand(400);
+                    o.close();
+                    v4b.togglePower();
+                    new WaitCommand(200);
+                    s.goToPosition(50);
+                }),
                new TrajectorySequenceCommand(drive, park)
         ));
     }

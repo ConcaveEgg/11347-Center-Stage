@@ -4,6 +4,7 @@ import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.arcrobotics.ftclib.command.CommandOpMode;
 import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
+import com.arcrobotics.ftclib.command.WaitCommand;
 import com.qualcomm.hardware.dfrobot.HuskyLens;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.hardware.Gamepad;
@@ -58,28 +59,28 @@ public class RedClose extends CommandOpMode {
         TrajectorySequence propCloseLeftRed = drive.trajectorySequenceBuilder(startPoseCloseRed)
                 .forward(25)
                 .turn(Math.toRadians(90))
-                .forward(11)
-                .back(11)
+                .forward(3)
+                .back(3)
                 .lineToLinearHeading(new Pose2d(12, -62, 0))
                 .build();
         TrajectorySequence scoreCloseLeftRed = drive.trajectorySequenceBuilder(propCloseLeftRed.end())
                 .forward(34)
-                .strafeLeft(24)
+                .strafeLeft(30)
                 .build();
 
         TrajectorySequence parkCloseLeftRed = drive.trajectorySequenceBuilder(scoreCloseLeftRed.end())
-                .strafeRight(24)
+                .strafeRight(30)
                 .forward(12)
                 .build();;
 
         TrajectorySequence propCloseMidRed = drive.trajectorySequenceBuilder(startPoseCloseRed)
-                .forward(25)
+                .forward(28)
                 .lineToLinearHeading(new Pose2d(12, -62, 0))
                 .build();
 
         TrajectorySequence scoreCloseMidRed = drive.trajectorySequenceBuilder(propCloseMidRed.end())
                 .forward(34)
-                .strafeLeft(19)
+                .strafeLeft(25)
                 .build();
 
         TrajectorySequence parkCloseMidRed = drive.trajectorySequenceBuilder(scoreCloseMidRed.end())
@@ -90,18 +91,18 @@ public class RedClose extends CommandOpMode {
         TrajectorySequence propCloseRightRed = drive.trajectorySequenceBuilder(startPoseCloseRed)
                 .forward(25)
                 .turn(Math.toRadians(-90))
-                .forward(11)
-                .back(11)
+                .forward(3)
+                .back(3)
                 .strafeRight(25)
                 .build();
 
         TrajectorySequence scoreCloseRightRed = drive.trajectorySequenceBuilder(propCloseRightRed.end())
                 .forward(34)
-                .strafeLeft(12)
+                .strafeLeft(20)
                 .build();
 
         TrajectorySequence parkCloseRightRed = drive.trajectorySequenceBuilder(scoreCloseRightRed.end())
-                .strafeRight(12)
+                .strafeRight(20)
                 .forward(12)
                 .build();
 
@@ -191,10 +192,20 @@ public class RedClose extends CommandOpMode {
 
         schedule(new SequentialCommandGroup(
                 new TrajectorySequenceCommand(drive, prop),
-//                new InstantCommand(() -> {
-//                    s.runToPos(Slides.SlidePos.LOW.position);
-//                })
                 new TrajectorySequenceCommand(drive, score),
+                new InstantCommand(() -> {
+                    new WaitCommand(20);
+                    s.goToPosition(70);
+                    new WaitCommand(200);
+                    v4b.togglePower();
+                    new WaitCommand(200);
+                    o.open();
+                    new WaitCommand(400);
+                    o.close();
+                    v4b.togglePower();
+                    new WaitCommand(200);
+                    s.goToPosition(50);
+                }),
                 new TrajectorySequenceCommand(drive, park)
         ));
     }
