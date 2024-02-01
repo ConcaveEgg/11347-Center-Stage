@@ -34,7 +34,7 @@ public class BlueFar extends CommandOpMode {
     TrajectorySequence score;
     TrajectorySequence park;
 
-    public static Pose2d startPoseFarBlue = new Pose2d(-35,62, Math.toRadians(90));
+    public static Pose2d startPoseFarBlue = new Pose2d(-35,62, Math.toRadians(-90));
     String section;
 
     @Override
