@@ -20,8 +20,8 @@ import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 import java.util.concurrent.TimeUnit;
 
 
-@Autonomous(name="Red Close 2plus2", group="Close")
-public class RedClose2plus2 extends CommandOpMode {
+@Autonomous(name="Blue Close 2plus2", group="Close")
+public class BlueClose2plus2 extends CommandOpMode {
     //Add Motors and servos not for drivebase here
     SampleMecanumDrive drive;
     Slides s;
@@ -65,9 +65,9 @@ public class RedClose2plus2 extends CommandOpMode {
         TrajectorySequence propCloseLeftRed = drive.trajectorySequenceBuilder(startPoseCloseRed)
                 .forward(25)
                 .turn(Math.toRadians(90))
-                .forward(3)
-                .back(3)
-                .lineToLinearHeading(new Pose2d(12, 62, 0))
+                .forward(11)
+                .back(11)
+                .lineToLinearHeading(new Pose2d(12, -62, 0))
                 .build();
         TrajectorySequence scoreCloseLeftRed = drive.trajectorySequenceBuilder(propCloseLeftRed.end())
                 .forward(34)
@@ -75,8 +75,8 @@ public class RedClose2plus2 extends CommandOpMode {
                 .build();
 
         TrajectorySequence parkCloseLeftRed = drive.trajectorySequenceBuilder(scoreCloseLeftRed.end())
-                .strafeRight(24)
-                .forward(12)
+                .strafeLeft(24)
+
                 .build();;
 
         TrajectorySequence propCloseMidRed = drive.trajectorySequenceBuilder(startPoseCloseRed)
@@ -95,8 +95,8 @@ public class RedClose2plus2 extends CommandOpMode {
                 //intake here(code this late)
 
         TrajectorySequence andScore = drive.trajectorySequenceBuilder(scoreCloseMidRed.end())
-                .lineToLinearHeading(new Pose2d(46.5, 10.9, Math.toRadians(0)))
-                .lineToLinearHeading(new Pose2d(46.5, 29.3, Math.toRadians(0)))
+                .lineToLinearHeading(new Pose2d(46.5, -10.9, Math.toRadians(0)))
+                .lineToLinearHeading(new Pose2d(45.8, 10.9, Math.toRadians(0)))
                 .build();
         TrajectorySequence parkFromScore = drive.trajectorySequenceBuilder(andScore.end())
                 .lineToLinearHeading(new Pose2d(46.5, 61.9, 0))
@@ -121,7 +121,7 @@ public class RedClose2plus2 extends CommandOpMode {
                 .strafeLeft(12)
                 .build();
 
-        TrajectorySequence parkCloseRightRed = drive.trajectorySequenceBuilder(scoreCloseRightRed.end())
+        TrajectorySequence parkCloseRightRed = drive.trajectorySequenceBuilder(getPixel.end())
                 .strafeRight(12)
                 .forward(12)
                 .build();
