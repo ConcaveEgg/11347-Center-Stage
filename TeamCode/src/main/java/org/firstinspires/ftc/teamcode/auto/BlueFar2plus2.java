@@ -20,8 +20,8 @@ import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 import java.util.concurrent.TimeUnit;
 
 
-@Autonomous(name="Red Close 2plus2", group="Close")
-public class RedClose2plus2 extends CommandOpMode {
+@Autonomous(name="Blue Far 2plus2", group="Far")
+public class BlueFar2plus2 extends CommandOpMode {
     //Add Motors and servos not for drivebase here
     SampleMecanumDrive drive;
     Slides s;
@@ -31,6 +31,7 @@ public class RedClose2plus2 extends CommandOpMode {
     Gamepad gamepad;
     private final int READ_PERIOD = 1;
     private HuskyLens huskyLens;
+    public static Pose2d startPoseFarRed = new Pose2d(-35,-62, Math.toRadians(90));
 
     TrajectorySequence prop;
     TrajectorySequence score;
@@ -48,7 +49,6 @@ public class RedClose2plus2 extends CommandOpMode {
         s = new Slides(hardwareMap);
         o = new Outtake(gamepad, hardwareMap);
         v4b = new V4B(hardwareMap);
-        i = new Intake(gamepad1, hardwareMap);
         huskyLens = hardwareMap.get(HuskyLens.class, "huskylens");
 
         Deadline rateLimit = new Deadline(READ_PERIOD, TimeUnit.SECONDS);
@@ -60,71 +60,74 @@ public class RedClose2plus2 extends CommandOpMode {
         }
         huskyLens.selectAlgorithm(HuskyLens.Algorithm.COLOR_RECOGNITION);
 
-        drive.setPoseEstimate(startPoseCloseRed);
+        drive.setPoseEstimate(startPoseFarRed);
 
-        TrajectorySequence propCloseLeftRed = drive.trajectorySequenceBuilder(startPoseCloseRed)
-                .forward(25)
-                .turn(Math.toRadians(90))
+        TrajectorySequence propFarMidRed = drive.trajectorySequenceBuilder(startPoseFarRed)
+
+                .lineToLinearHeading(new Pose2d(-35.6, 32, Math.toRadians(-90)))
+                .back(6)
+                .strafeRight(15)
+                .lineToLinearHeading(new Pose2d(-51.6, 7.4, Math.toRadians(0)))
+                .build();
+
+        TrajectorySequence propFarLeftRed =  drive.trajectorySequenceBuilder(startPoseFarRed)
                 .forward(3)
                 .back(3)
-                .lineToLinearHeading(new Pose2d(12, 62, 0))
-                .build();
-        TrajectorySequence scoreCloseLeftRed = drive.trajectorySequenceBuilder(propCloseLeftRed.end())
-                .forward(34)
-                .strafeRight(24)
+                .lineToLinearHeading(new Pose2d(-36.6, 30.5, Math.toRadians(180)))
                 .build();
 
-        TrajectorySequence parkCloseLeftRed = drive.trajectorySequenceBuilder(scoreCloseLeftRed.end())
-                .strafeRight(24)
-                .forward(12)
-                .build();;
-
-        TrajectorySequence propCloseMidRed = drive.trajectorySequenceBuilder(startPoseCloseRed)
+        TrajectorySequence propFarRightRed = drive.trajectorySequenceBuilder(startPoseFarRed)
                 .forward(25)
-                .lineToLinearHeading(new Pose2d(12, -62, 0))
+                .back(3)
+                .lineToLinearHeading(new Pose2d(-32.6, 30.5, Math.toRadians(0)))
                 .build();
 
-        TrajectorySequence scoreCloseMidRed = drive.trajectorySequenceBuilder(propCloseMidRed.end())
-                .forward(34)
-                .strafeRight(25)
+
+        TrajectorySequence scoreFarLeftRed = drive.trajectorySequenceBuilder(propFarMidRed.end())
+                .lineToLinearHeading(new Pose2d(47.4, 7.4, Math.toRadians(0)))
+                .strafeLeft(25-3)
                 .build();
-        TrajectorySequence getPixel = drive.trajectorySequenceBuilder(scoreCloseMidRed.end())
+        TrajectorySequence scoreFarMidRed = drive.trajectorySequenceBuilder(propFarMidRed.end())
+                .lineToLinearHeading(new Pose2d(47.4, 7.4, Math.toRadians(0)))
+                .strafeLeft(25)
+                .build();
+        TrajectorySequence scoreFarRightRed = drive.trajectorySequenceBuilder(propFarRightRed.end())
+                .lineToLinearHeading(new Pose2d(47.4, 7.4, Math.toRadians(0)))
+                .strafeLeft(25+3)
+                .build();
+
+//        TrajectorySequence parkFarLeftRed = drive.trajectorySequenceBuilder(scoreFarLeftRed.end())
+//                .back(4)
+//                .lineToLinearHeading(new Pose2d(46.0, -11.6, Math.toRadians(0)))
+//                .forward(10)
+//                .build();
+//
+//        TrajectorySequence parkFarMidRed = drive.trajectorySequenceBuilder(scoreFarMidRed.end())
+//                .back(4)
+//                .lineToLinearHeading(new Pose2d(46.0, -11.6, Math.toRadians(0)))
+//                .forward(10)
+//                .build();
+//
+//        TrajectorySequence parkFarRightRed = drive.trajectorySequenceBuilder(scoreFarMidRed.end())
+//                .back(4)
+//                .lineToLinearHeading(new Pose2d(46.0, -11.6, Math.toRadians(0)))
+//                .forward(10)
+//                .build();
+        TrajectorySequence getPixel = drive.trajectorySequenceBuilder(scoreFarMidRed.end())
                 .lineToLinearHeading(new Pose2d(46.5, 10.9, Math.toRadians(180)))
                 .lineToLinearHeading(new Pose2d(-60, 10.9, Math.toRadians(180)))
                 .build();
-                //intake here(code this late)
+        //intake here(code this late)
 
-        TrajectorySequence andScore = drive.trajectorySequenceBuilder(scoreCloseMidRed.end())
+        TrajectorySequence andScore = drive.trajectorySequenceBuilder(getPixel.end())
                 .lineToLinearHeading(new Pose2d(46.5, 10.9, Math.toRadians(0)))
-                .lineToLinearHeading(new Pose2d(46.5, 29.3, Math.toRadians(0)))
+                .lineToLinearHeading(new Pose2d(47.2, 29.3, Math.toRadians(0)))
                 .build();
         TrajectorySequence parkFromScore = drive.trajectorySequenceBuilder(andScore.end())
-                .lineToLinearHeading(new Pose2d(46.5, 61.9, 0))
+                .lineToLinearHeading(new Pose2d(46.5, 10.9, 0))
                 .forward(10)
                 .build();
 
-        TrajectorySequence parkCloseMidRed = drive.trajectorySequenceBuilder(scoreCloseMidRed.end())
-                .strafeRight(25)
-                .forward(12)
-                .build();
-//
-        TrajectorySequence propCloseRightRed = drive.trajectorySequenceBuilder(startPoseCloseRed)
-                .forward(25)
-                .turn(Math.toRadians(-90))
-                .forward(11)
-                .back(11)
-                .strafeRight(25)
-                .build();
-
-        TrajectorySequence scoreCloseRightRed = drive.trajectorySequenceBuilder(propCloseRightRed.end())
-                .forward(34)
-                .strafeLeft(12)
-                .build();
-
-        TrajectorySequence parkCloseRightRed = drive.trajectorySequenceBuilder(scoreCloseRightRed.end())
-                .strafeRight(12)
-                .forward(12)
-                .build();
 
         while (opModeInInit()) {
             if (!rateLimit.hasExpired()) {
@@ -171,26 +174,26 @@ public class RedClose2plus2 extends CommandOpMode {
 
         switch(section) {
             case "LEFT":
-                prop = propCloseLeftRed;
-                score = scoreCloseLeftRed;
-//                park = parkCloseLeftRed;
+                prop = propFarLeftRed;
+                score = scoreFarLeftRed;
+//                park = parkFarLeftRed;
                 intakeIt = getPixel;
                 scorePlus = andScore;
                 parkAfter2 = parkFromScore;
                 break;
             case "MIDDLE":
-                prop = propCloseMidRed;
-                score = scoreCloseMidRed;
-//                park = parkCloseMidRed;
+                prop = propFarMidRed;
+                score = scoreFarMidRed;
+//                park = parkFarMidRed;
                 intakeIt = getPixel;
                 scorePlus = andScore;
                 parkAfter2 = parkFromScore;
 
                 break;
             default:
-                prop = propCloseRightRed;
-                score = scoreCloseRightRed;
-//                park = parkCloseRightRed;
+                prop = propFarRightRed;
+                score = scoreFarRightRed;
+//                park = parkFarRightRed;
                 intakeIt = getPixel;
                 scorePlus = andScore;
                 parkAfter2 = parkFromScore;
@@ -200,9 +203,9 @@ public class RedClose2plus2 extends CommandOpMode {
 //        schedule(new SequentialCommandGroup ( //Makes the following code run one after another, like norma
 //            new ParallelCommandGroup(
 //                new SequentialCommandGroup(
-//                    new TrajectorySequenceCommand(drive, propCloseMidRed),
-//                    new TrajectorySequenceCommand(drive, scoreCloseMidRed),
-//                    new TrajectorySequenceCommand(drive, parkCloseMidRed)
+//                    new TrajectorySequenceCommand(drive, propFarMidRed),
+//                    new TrajectorySequenceCommand(drive, scoreFarMidRed),
+//                    new TrajectorySequenceCommand(drive, parkFarMidRed)
 //                ),
 //                new InstantCommand(() -> {
 //                    new WaitCommand(4000);
