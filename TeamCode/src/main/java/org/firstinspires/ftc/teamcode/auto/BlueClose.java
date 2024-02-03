@@ -112,47 +112,39 @@ public class BlueClose extends CommandOpMode {
 
         //Spline trajectories
 
-        TrajectorySequence propLeftSplines = drive.trajectorySequenceBuilder(startPoseCloseBlue)
-                .splineToLinearHeading(new Pose2d(13, 37, Math.toRadians(0)), Math.toRadians(0))
+        TrajectorySequence LeftSplines = drive.trajectorySequenceBuilder(startPoseCloseBlue)
+//                Prop
+                .lineToLinearHeading(new Pose2d(13, 30, Math.toRadians(0)))
+//                Score
+                .back(3)
+                .strafeLeft(13)
+                .splineToSplineHeading(new Pose2d(46, 42, Math.toRadians(0)), 0)
+//                Park
+                .strafeLeft(10)
+                .splineToLinearHeading(new Pose2d(60, 62, 0), 0)
                 .build();
 
-        TrajectorySequence scoreLeftSplines = drive.trajectorySequenceBuilder(propLeftSplines.end())
-                .back(5)
-                .splineToSplineHeading(new Pose2d(46, -32, Math.toRadians(0)), 0)
-                .build();
-
-        TrajectorySequence parkLeftSplines = drive.trajectorySequenceBuilder(scoreLeftSplines.end())
-                .strafeRight(20)
-                .splineToLinearHeading(new Pose2d(60, -62, 0), 0)
-                .build();
-
-        TrajectorySequence propRightSplines = drive.trajectorySequenceBuilder(startPoseCloseBlue)
-                .splineToLinearHeading(new Pose2d(13, -37, Math.toRadians(0)), Math.toRadians(0))
-                .build();
-
-        TrajectorySequence scoreRightSplines = drive.trajectorySequenceBuilder(propRightSplines.end())
+        TrajectorySequence RightSplines = drive.trajectorySequenceBuilder(startPoseCloseBlue)
+//                Prop
+                .splineToLinearHeading(new Pose2d(9, 37, Math.toRadians(180)), Math.toRadians(180))
+//                Score
                 .back(3)
                 .strafeRight(10)
-                .splineToSplineHeading(new Pose2d(46, -42, Math.toRadians(0)), 0)
+                .splineToSplineHeading(new Pose2d(46, 32, Math.toRadians(0)), 0)
+//                Park
+                .strafeLeft(10)
+                .splineToLinearHeading(new Pose2d(60, 62, 0), 0)
                 .build();
 
-        TrajectorySequence parkRightSplines = drive.trajectorySequenceBuilder(scoreRightSplines.end())
-                .strafeRight(10)
-                .splineToLinearHeading(new Pose2d(60, -62, 0), 0)
-                .build();
-
-        TrajectorySequence propMidSplines = drive.trajectorySequenceBuilder(startPoseCloseBlue)
+        TrajectorySequence MidSplines = drive.trajectorySequenceBuilder(startPoseCloseBlue)
+//                Prop
                 .forward(28)
-                .build();
-
-        TrajectorySequence scoreMidSplines = drive.trajectorySequenceBuilder(propMidSplines.end())
+//                Score
                 .back(3)
-                .splineToSplineHeading(new Pose2d(46, -37, Math.toRadians(0)), 0)
-                .build();
-
-        TrajectorySequence parkMidSplines = drive.trajectorySequenceBuilder(scoreMidSplines.end())
-                .strafeRight(15)
-                .splineToLinearHeading(new Pose2d(60, -62, 0), 0)
+                .splineToSplineHeading(new Pose2d(46, 37, Math.toRadians(0)), 0)
+//                Park
+                .strafeLeft(15)
+                .splineToLinearHeading(new Pose2d(60, 62, 0), 0)
                 .build();
 
         while (opModeInInit()) {

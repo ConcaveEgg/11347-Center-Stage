@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.auto;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.arcrobotics.ftclib.command.CommandOpMode;
 import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
@@ -106,6 +107,37 @@ public class RedFar extends CommandOpMode {
         TrajectorySequence parkFarRightRed = drive.trajectorySequenceBuilder(scoreFarMidRed.end())
                 .strafeLeft(25)
                 .forward(14)
+                .build();
+
+//        Splines
+
+        TrajectorySequence leftSplines = drive.trajectorySequenceBuilder(startPoseFarRed)
+//                Prop
+                .lineToLinearHeading(new Pose2d(-37, -30, Math.toRadians(180)))
+//                Score
+                .lineToLinearHeading(new Pose2d(-34, -14, Math.toRadians(0)))
+                .lineToLinearHeading(new Pose2d(35, -14, Math.toRadians(0)))
+                .splineToConstantHeading(new Vector2d(46, -28), Math.toRadians(0))
+//                Park
+                .strafeLeft(5)
+                .splineToConstantHeading(new Vector2d(60, -11), Math.toRadians(0))
+                .build();
+
+        TrajectorySequence rightSplines = drive.trajectorySequenceBuilder(startPoseFarRed)
+//                Prop
+                .splineToLinearHeading(new Pose2d(-33, -30, Math.toRadians(0)), 0)
+//                Score
+                .back(5)
+                .lineToLinearHeading(new Pose2d(-34, -14, Math.toRadians(0)))
+                .lineToLinearHeading(new Pose2d(35, -14, Math.toRadians(0)))
+                .splineToConstantHeading(new Vector2d(46, -39), Math.toRadians(0))
+//                Park
+                .strafeLeft(10)
+                .splineToConstantHeading(new Vector2d(60, -11), Math.toRadians(0))
+                .build();
+
+        TrajectorySequence midSplines = drive.trajectorySequenceBuilder(startPoseFarRed)
+
                 .build();
 
 
