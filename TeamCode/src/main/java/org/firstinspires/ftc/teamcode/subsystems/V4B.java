@@ -13,16 +13,16 @@ public class V4B extends SubsystemBase {
 
         public double position;
 
-        V4BState(double power) {
-            this.position = power;
+        V4BState(double position) {
+            this.position = position;
         }
     }
 
-    private CRServo servo1, servo2;
+    private Servo servo1, servo2;
 
     public V4B(HardwareMap hardwareMap) {
-        servo1 = hardwareMap.get(CRServo.class, "leftV4B"); // Left Side
-        servo2 = hardwareMap.get(CRServo.class, "rightV4B"); // Right Side
+        servo1 = hardwareMap.get(Servo.class, "leftV4B"); // Left Side
+        servo2 = hardwareMap.get(Servo.class, "rightV4B"); // Right Side
 
     }
 
@@ -34,21 +34,21 @@ public class V4B extends SubsystemBase {
 //    }
 
     public void forceDown() {
-        servo1.setPower(V4BState.RETRACT.position);
-        servo2.setPower(V4BState.RETRACT.position);
+        servo1.setPosition(V4BState.RETRACT.position);
+        servo2.setPosition(V4BState.RETRACT.position);
     }
 
     public void setPosition(V4BState state) {
-        servo1.setPower(state.position);
-        servo2.setPower(state.position);
+        servo1.setPosition(state.position);
+        servo2.setPosition(state.position);
     }
 
-    public double getPower() {
-        return servo1.getPower();
+    public double getPosition() {
+        return servo1.getPosition();
     }
 
     public void togglePower() {
-        if (getPower() == V4BState.RETRACT.position) {
+        if (getPosition() == V4BState.RETRACT.position) {
             setPosition(V4BState.EXTEND);
         } else {
             setPosition(V4BState.RETRACT);

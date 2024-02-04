@@ -12,10 +12,13 @@ public class Mechanisms extends SubsystemBase {
     private Gamepad gamepad1, gamepad2;
     private Servo out1, out2, launchPlane;
     private CRServo DRV4BL, DRV4BR;
+//    private CRServo DRV4BL, DRV4BR;
 
     public Mechanisms(Gamepad gamepad1, Gamepad gamepad2, HardwareMap hardwareMap) {
         DRV4BL = hardwareMap.crservo.get("leftV4B"); //Virtual Four Bar Servos // Left Side
         DRV4BR = hardwareMap.crservo.get("rightV4B"); //Virtual Four Bar Servos //Right Side
+//        DRV4BL = hardwareMap.servo.get("leftV4B");
+//        DRV4BR = hardwareMap.servo.get("rightV4B");
         launchPlane = hardwareMap.servo.get("launcher");
         out1 = hardwareMap.servo.get("leftOut"); //Outtake
         out2 = hardwareMap.servo.get("rightOut"); //Outtake

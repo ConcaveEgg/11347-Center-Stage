@@ -24,10 +24,10 @@ public class ImpastaCommandTeleOp extends CommandOpMode {
     Mechanisms mechanisms;
 
     //Slide Positions
-    final int HIGH = 130;
-    final int MID = 90;
-    final int LOW = 70;
-    final int GROUND = 50;
+    final int HIGH = 200;
+    final int MID = 150;
+    final int LOW = 100;
+    final int GROUND = 10;
 
     private boolean pidActive = false;
     private boolean nothing = false;
@@ -44,9 +44,9 @@ public class ImpastaCommandTeleOp extends CommandOpMode {
         bl = hardwareMap.dcMotor.get("leftRear"); // Drivebase
         br = hardwareMap.dcMotor.get("rightRear"); // Drivebase
 
-        leftSlide = hardwareMap.dcMotor.get("frontEncoder"); // Slides
-        rightSlide = hardwareMap.dcMotor.get("Right Slide"); // Slides
-        Intake = hardwareMap.dcMotor.get("leftEncoder"); //Pixel Intake
+        leftSlide = hardwareMap.dcMotor.get("leftSlide_frontEncoder"); // Slides
+        rightSlide = hardwareMap.dcMotor.get("rightSlide"); // Slides
+        Intake = hardwareMap.dcMotor.get("intake_leftEncoder"); //Pixel Intake
 
         leftSlide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rightSlide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -59,25 +59,25 @@ public class ImpastaCommandTeleOp extends CommandOpMode {
         schedule(new BulkCacheCommand(hardwareMap));
 
         // Commands for controlling the lift using buttons
-//        mechanism.getGamepadButton(GamepadKeys.Button.DPAD_UP)
-//                .whenPressed(new InstantCommand(() -> {pidActive = true;}))
-//                .whenPressed(new SlidePID(impasta, HIGH).withTimeout(1500))
-//                .whenReleased(new InstantCommand(() -> {pidActive = false;}));
-//
-//        mechanism.getGamepadButton(GamepadKeys.Button.DPAD_LEFT)
-//                .whenPressed(new InstantCommand(() -> {pidActive = true;}))
-//                .whenPressed(new SlidePID(impasta, MID).withTimeout(1500))
-//                .whenReleased(new InstantCommand(() -> {pidActive = false;}));
-//
-//        mechanism.getGamepadButton(GamepadKeys.Button.DPAD_RIGHT)
-//                .whenPressed(new InstantCommand(() -> {pidActive = true;}))
-//                .whenPressed(new SlidePID(impasta, LOW).withTimeout(1500))
-//                .whenReleased(new InstantCommand(() -> {pidActive = false;}));
-//
-//        mechanism.getGamepadButton(GamepadKeys.Button.DPAD_DOWN)
-//                .whenPressed(new InstantCommand(() -> {pidActive = true;}))
-//                .whenPressed(new SlidePID(impasta, GROUND).withTimeout(1500))
-//                .whenReleased(new InstantCommand(() -> {pidActive = false;}));
+        mechanism.getGamepadButton(GamepadKeys.Button.DPAD_UP)
+                .whenPressed(new InstantCommand(() -> {pidActive = true;}))
+                .whenPressed(new SlidePID(impasta, HIGH).withTimeout(1500))
+                .whenReleased(new InstantCommand(() -> {pidActive = false;}));
+
+        mechanism.getGamepadButton(GamepadKeys.Button.DPAD_LEFT)
+                .whenPressed(new InstantCommand(() -> {pidActive = true;}))
+                .whenPressed(new SlidePID(impasta, MID).withTimeout(1500))
+                .whenReleased(new InstantCommand(() -> {pidActive = false;}));
+
+        mechanism.getGamepadButton(GamepadKeys.Button.DPAD_RIGHT)
+                .whenPressed(new InstantCommand(() -> {pidActive = true;}))
+                .whenPressed(new SlidePID(impasta, LOW).withTimeout(1500))
+                .whenReleased(new InstantCommand(() -> {pidActive = false;}));
+
+        mechanism.getGamepadButton(GamepadKeys.Button.DPAD_DOWN)
+                .whenPressed(new InstantCommand(() -> {pidActive = true;}))
+                .whenPressed(new SlidePID(impasta, GROUND).withTimeout(1500))
+                .whenReleased(new InstantCommand(() -> {pidActive = false;}));
 
         // Command for resetting the lift
         mechanism.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER)
@@ -107,7 +107,7 @@ public class ImpastaCommandTeleOp extends CommandOpMode {
 
         if (!pidActive) {
             impasta.runManual(gamepad2.right_stick_y);
-            telemetry.addLine("Left Lift Position: " + leftSlide.getCurrentPosition());
+            telemetry.addLine("Lift Position: " + rightSlide.getCurrentPosition());
         }
 
         mechanisms.airplaneLauncher();
