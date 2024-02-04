@@ -70,16 +70,16 @@ public class Mechanisms extends SubsystemBase {
     public void outtakes() {
         if (gamepad2.left_trigger > 0.3 /*|| DetectDistance() <= distance*/) {
 //            gamepad2.rumble(100);
-            out1.setPosition(0.75); // left //lower
+            out1.setPosition(0); // left //lower
         } else {
-            out1.setPosition(0.55); // left //raise
+            out1.setPosition(0.5); // left //raise
         }
 
         if (gamepad2.right_trigger > 0.3 /*|| DetectDistance() <= distance */) {
 //            gamepad2.rumble(100);
-            out2.setPosition(0.5); // right //lower
+            out2.setPosition(0.5); // right //lowers
         } else {
-            out2.setPosition(0.6); // right //raise
+            out2.setPosition(0.5); // right //raise
         }
     }
 }
