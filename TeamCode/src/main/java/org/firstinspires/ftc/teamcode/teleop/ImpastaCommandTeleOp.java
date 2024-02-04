@@ -30,7 +30,6 @@ public class ImpastaCommandTeleOp extends CommandOpMode {
     final int GROUND = 10;
 
     private boolean pidActive = false;
-    private boolean nothing = false;
 
     private DcMotor fl, fr, bl, br, leftSlide, rightSlide, Intake;
 
@@ -106,7 +105,7 @@ public class ImpastaCommandTeleOp extends CommandOpMode {
         }
 
         if (!pidActive) {
-            impasta.runManual(gamepad2.right_stick_y);
+            impasta.runManual(-gamepad2.left_stick_y);
             telemetry.addLine("Lift Position: " + rightSlide.getCurrentPosition());
         }
 

@@ -15,12 +15,12 @@ import org.firstinspires.ftc.teamcode.subsystems.Intake;
 import org.firstinspires.ftc.teamcode.subsystems.Outtake;
 import org.firstinspires.ftc.teamcode.subsystems.Slides;
 import org.firstinspires.ftc.teamcode.subsystems.V4B;
-import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
+import org.firstinspires.ftc.teamcode.vision.trajectorysequence.TrajectorySequence;
 
 import java.util.concurrent.TimeUnit;
 
 
-@Autonomous(name="Red Close 2plus2", group="Far")
+@Autonomous(name="Red Far 2plus2", group="Far")
 public class RedFar2plus2 extends CommandOpMode {
     //Add Motors and servos not for drivebase here
     SampleMecanumDrive drive;

@@ -11,8 +11,8 @@ public class Mechanisms extends SubsystemBase {
     Impasta impasta;
     private Gamepad gamepad1, gamepad2;
     private Servo out1, out2, launchPlane;
+//    private Servo DRV4BL, DRV4BR;
     private CRServo DRV4BL, DRV4BR;
-//    private CRServo DRV4BL, DRV4BR;
 
     public Mechanisms(Gamepad gamepad1, Gamepad gamepad2, HardwareMap hardwareMap) {
         DRV4BL = hardwareMap.crservo.get("leftV4B"); //Virtual Four Bar Servos // Left Side
@@ -68,18 +68,16 @@ public class Mechanisms extends SubsystemBase {
     }
 
     public void outtakes() {
-        if (gamepad2.left_trigger > 0.3 /*|| DetectDistance() <= distance*/) {
-//            gamepad2.rumble(100);
-            out1.setPosition(0); // left //lower
+        if (gamepad2.left_trigger > 0.3) {
+            out1.setPosition(1); // left //lower
         } else {
-            out1.setPosition(0.5); // left //raise
+            out1.setPosition(0.9); // left //raise
         }
 
-        if (gamepad2.right_trigger > 0.3 /*|| DetectDistance() <= distance */) {
-//            gamepad2.rumble(100);
-            out2.setPosition(0.5); // right //lowers
+        if (gamepad2.right_trigger > 0.3) {
+            out2.setPosition(1); // right //lowers
         } else {
-            out2.setPosition(0.5); // right //raise
+            out2.setPosition(0.9); // right //raise
         }
     }
 }
