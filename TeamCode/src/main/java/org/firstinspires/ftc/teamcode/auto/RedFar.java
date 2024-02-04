@@ -123,7 +123,7 @@ public class RedFar extends CommandOpMode {
 
         TrajectorySequence rightSplines = drive.trajectorySequenceBuilder(startPoseFarRed)
 //                Prop
-                .splineToLinearHeading(new Pose2d(-33, -30, Math.toRadians(0)), 0)
+                .splineToLinearHeading(new Pose2d(-34, -30, Math.toRadians(0)), 0)
 //                Score
                 .back(5)
                 .lineToLinearHeading(new Pose2d(-34, -14, Math.toRadians(0)))
@@ -135,7 +135,17 @@ public class RedFar extends CommandOpMode {
                 .build();
 
         TrajectorySequence midSplines = drive.trajectorySequenceBuilder(startPoseFarRed)
-
+//                Prop
+                .splineToLinearHeading(new Pose2d(-52, -48, Math.toRadians(90)), Math.toRadians(90))
+                .splineToLinearHeading(new Pose2d(-39, -28, Math.toRadians(0)), 0)
+//                Score
+                .back(5)
+                .splineToLinearHeading(new Pose2d(-39, -14, Math.toRadians(0)), 0)
+                .lineToLinearHeading(new Pose2d(35, -14, Math.toRadians(0)))
+                .splineToConstantHeading(new Vector2d(46, -34), Math.toRadians(0))
+//                Park
+                .strafeLeft(10)
+                .splineToConstantHeading(new Vector2d(60, -11), Math.toRadians(0))
                 .build();
 
 
