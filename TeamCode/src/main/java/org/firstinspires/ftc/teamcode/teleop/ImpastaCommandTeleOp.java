@@ -8,7 +8,6 @@ import com.kauailabs.navx.ftc.AHRS;
 import com.qualcomm.hardware.kauailabs.NavxMicroNavigationSensor;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.auto.BulkCacheCommand;
 import org.firstinspires.ftc.teamcode.subsystems.Impasta;
@@ -105,8 +104,8 @@ public class ImpastaCommandTeleOp extends CommandOpMode {
         }
 
         if (!pidActive) {
-            impasta.runManual(-gamepad2.left_stick_y);
-            telemetry.addLine("Lift Position: " + rightSlide.getCurrentPosition());
+            impasta.runManual(gamepad2.left_stick_y);
+            telemetry.addLine("Lift Position: " + -rightSlide.getCurrentPosition());
         }
 
         mechanisms.airplaneLauncher();

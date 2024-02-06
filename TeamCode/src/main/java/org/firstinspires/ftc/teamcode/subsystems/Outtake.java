@@ -10,10 +10,10 @@ import com.qualcomm.robotcore.hardware.ServoImplEx;
 
 public class    Outtake extends SubsystemBase {
 
-    private static final double L_OPEN_POS = 0.75;
-    private static final double L_CLOSED_POS = 0.55;
-    private static final double R_OPEN_POS = 0.6;
-    private static final double R_CLOSED_POS = 0.5;
+    private static final double L_OPEN_POS = 1;
+    private static final double L_CLOSED_POS = 0.9;
+    private static final double R_OPEN_POS = 1;
+    private static final double R_CLOSED_POS = 0.9;
     private Servo leftOuttake, rightOuttake;
     private Gamepad gamepad;
 
@@ -35,18 +35,16 @@ public class    Outtake extends SubsystemBase {
     }
 
     public void update() {
-        if (gamepad.left_trigger > 0.3 /*|| DetectDistance() <= distance*/) {
-            gamepad.rumble(1000);
-            leftOuttake.setPosition(0.75); // left //lower
+        if (gamepad.left_trigger > 0.3) {
+            leftOuttake.setPosition(L_CLOSED_POS); // left //lower
         } else {
-            leftOuttake.setPosition(0.55); // left //raise
+            leftOuttake.setPosition(L_OPEN_POS); // left //raise
         }
 
-        if (gamepad.right_trigger > 0.3 /*|| DetectDistance() <= distance */) {
-            gamepad.rumble(1000);
-            rightOuttake.setPosition(0.5); // right //lower
+        if (gamepad.right_trigger > 0.3) {
+            rightOuttake.setPosition(R_CLOSED_POS); // right //lower
         } else {
-            rightOuttake.setPosition(0.6); // right //raise
+            rightOuttake.setPosition(R_OPEN_POS); // right //raise
         }
     }
 }

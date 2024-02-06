@@ -4,13 +4,12 @@ import com.arcrobotics.ftclib.command.SubsystemBase;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.hardware.VoltageSensor;
 
 public class Slides extends SubsystemBase {
 
     public enum SlidePos {
         DOWN(50),
-        LOW(70), //way too high
+        LOW(70),
         MED(90),
         HIGH(130);
 
