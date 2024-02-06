@@ -47,7 +47,7 @@ public class Mechanisms extends SubsystemBase {
             DRV4BL.setPosition(0.01);
             DRV4BR.setPosition(0.01);
         }
-        
+
 //        if (gamepad2.circle) {
 //            // Rotate the CR servos clockwise as long as the button is pressed
 //            while (gamepad2.circle) {
