@@ -56,4 +56,8 @@ public class Outtake extends SubsystemBase {
             rightOuttake.setPosition(outtakePos.CLOSE.position);
         }
     }
+
+    public double getPosition() {
+        return leftOuttake.getPosition();
+    }
 }
