@@ -36,10 +36,8 @@ public class Impasta {
         fr.setDirection(DcMotor.Direction.REVERSE);
         br.setDirection(DcMotor.Direction.REVERSE);
 
-        leftSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         rightSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        leftSlide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        rightSlide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        rightSlide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
     public Impasta(DcMotor leftSlide, DcMotor rightSlide) {
@@ -134,9 +132,13 @@ public class Impasta {
         rightSlide.setPower(power);
     }
 
-    public void runManual(double dr4bp) {
-        leftSlide.setPower(-dr4bp);
-        rightSlide.setPower(dr4bp);
+    public void runManual(double dr4bp, boolean doClimbing) {
+        if (doClimbing) {
+            leftSlide.setPower(-dr4bp);
+            rightSlide.setPower(dr4bp);
+        } else {
+            rightSlide.setPower(-dr4bp);
+        }
     }
 
     public double getSlidesPos() {
@@ -145,7 +147,6 @@ public class Impasta {
 
     public void runPID(double targetPos) {
         double output = pid.update(leftSlide.getCurrentPosition(), targetPos);
-        leftSlide.setPower(output);
         rightSlide.setPower(-output);
     }
 

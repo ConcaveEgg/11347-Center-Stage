@@ -29,6 +29,6 @@ public class SlidePID extends CommandBase {
 
     @Override
     public void end(boolean interupted) {
-        impasta.runManual(0);
+        impasta.runManual(0, false);
     }
 }

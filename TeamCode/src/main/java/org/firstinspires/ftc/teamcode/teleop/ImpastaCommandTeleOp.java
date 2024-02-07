@@ -31,6 +31,7 @@ public class ImpastaCommandTeleOp extends CommandOpMode {
     private boolean pidActive = false;
 
     private DcMotor fl, fr, bl, br, leftSlide, rightSlide, Intake;
+    private boolean doClimbing = false;
 
     @Override
     public void initialize() {
@@ -46,8 +47,14 @@ public class ImpastaCommandTeleOp extends CommandOpMode {
         rightSlide = hardwareMap.dcMotor.get("rightSlide"); // Slides
         Intake = hardwareMap.dcMotor.get("intake_leftEncoder"); //Pixel Intake
 
-        leftSlide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rightSlide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+        if (doClimbing) {
+            leftSlide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        } else {
+            leftSlide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.UNKNOWN);
+        }
+
 
         AHRS imu = AHRS.getInstance(hardwareMap.get(NavxMicroNavigationSensor.class, "navx"), AHRS.DeviceDataType.kProcessedData);
 
@@ -90,7 +97,7 @@ public class ImpastaCommandTeleOp extends CommandOpMode {
     @Override
     public void run(){
         super.run();
-        impasta.driveBaseField(-gamepad1.left_stick_y, gamepad1.left_stick_x * 1.1, -gamepad1.right_stick_x);
+        impasta.driveBaseField(-gamepad1.left_stick_y, -gamepad1.left_stick_x * 1.1, -gamepad1.right_stick_x);
 
         if (gamepad1.left_bumper || gamepad1.right_bumper) {
             impasta.reset();
@@ -99,17 +106,36 @@ public class ImpastaCommandTeleOp extends CommandOpMode {
 
         impasta.intake(gamepad1.left_trigger - gamepad1.right_trigger);
 
-        if (gamepad2.left_bumper || gamepad1.right_bumper) {
+        if (gamepad2.left_bumper) {
             impasta.resetSlide();
         }
 
         if (!pidActive) {
-            impasta.runManual(gamepad2.left_stick_y);
+            impasta.runManual(gamepad2.left_stick_y, doClimbing);
             telemetry.addLine("Lift Position: " + -rightSlide.getCurrentPosition());
         }
 
-        mechanisms.airplaneLauncher();
-        mechanisms.v4b();
+        if (gamepad1.triangle) {
+            mechanisms.resetLaunch();
+        } else if (gamepad1.square) {
+            mechanisms.launch();
+        }
+
+        if (gamepad2.right_bumper) {
+            doClimbing = !doClimbing;
+            if (doClimbing) {
+                leftSlide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            } else {
+                leftSlide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.UNKNOWN);
+            }
+        }
+
+        if (gamepad2.circle) {
+            mechanisms.extend();
+        } else if (gamepad2.cross) {
+            mechanisms.retract();
+        }
+
         mechanisms.outtakes();
 
         telemetry.update();
