@@ -17,10 +17,6 @@ public class Mechanisms extends SubsystemBase {
     private Servo out1, out2, launchPlane;
     private Servo DRV4BL, DRV4BR;
     //    private CRServo DRV4BL, DRV4BR;
-    private DistanceSensor leftSensor, rightSensor;
-    //Need correct value
-    private  int distance = 3;
-    private  boolean leftOuttakeDown, rightOuttakeDown;
 
     public Mechanisms(Gamepad gamepad1, Gamepad gamepad2, HardwareMap hardwareMap) {
 //        DRV4BL = hardwareMap.crservo.get("leftV4B"); //Virtual Four Bar Servos // Left Side
@@ -30,9 +26,6 @@ public class Mechanisms extends SubsystemBase {
         launchPlane = hardwareMap.servo.get("launcher");
         out1 = hardwareMap.servo.get("leftOut"); //Outtake
         out2 = hardwareMap.servo.get("rightOut"); //Outtake
-        leftSensor = hardwareMap.get(DistanceSensor.class, "Left Sensor");
-        rightSensor = hardwareMap.get(DistanceSensor.class, "Right Sensor");
-
 
         this.gamepad1 = gamepad1;
         this.gamepad2 = gamepad2;
@@ -81,28 +74,16 @@ public class Mechanisms extends SubsystemBase {
     }
 //  TODO: Test distance sensors
     public void outtakes() {
-        if (gamepad2.left_trigger > 0.3 || leftSensor.getDistance(DistanceUnit.INCH) <= distance) {
-            gamepad2.rumble(1000);
+        if (gamepad2.left_trigger > 0.3) {
             out1.setPosition(1);
-            if (gamepad2.left_trigger > 0.3) {
-                leftOuttakeDown = true;
-            }
-        }
-        if (leftOuttakeDown && gamepad2.left_trigger <= 0.3) {
+        } else {
             out1.setPosition(0.92);
-            leftOuttakeDown = false;
         }
 
-        if (gamepad2.right_trigger > 0.3 || rightSensor.getDistance(DistanceUnit.INCH) <= distance) {
-            gamepad2.rumble(1000);
+        if (gamepad2.right_trigger > 0.3) {
             out2.setPosition(1);
-            if (gamepad2.right_trigger > 0.3) {
-                rightOuttakeDown = true;
-            }
-        }
-        if (rightOuttakeDown && gamepad2.right_trigger <= 0.3) {
+        } else {
             out2.setPosition(0.92);
-            rightOuttakeDown = false;
         }
     }
 }

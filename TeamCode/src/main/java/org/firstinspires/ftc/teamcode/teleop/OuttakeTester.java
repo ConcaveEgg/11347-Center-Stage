@@ -38,6 +38,8 @@ public class OuttakeTester extends LinearOpMode {
             }
 
             telemetry.addLine("Outtake Pos: " + outtake.getPosition());
+            telemetry.addLine("Left Distance: " + outtake.returnDistanceLeft());
+            telemetry.addLine("Right Distance: " + outtake.returnDistanceRight());
             telemetry.update();
         }
     }
