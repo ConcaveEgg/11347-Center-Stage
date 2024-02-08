@@ -52,7 +52,7 @@ public class ImpastaCommandTeleOp extends CommandOpMode {
         if (doClimbing) {
             leftSlide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         } else {
-            leftSlide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.UNKNOWN);
+            leftSlide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         }
 
 
@@ -126,9 +126,11 @@ public class ImpastaCommandTeleOp extends CommandOpMode {
             if (doClimbing) {
                 leftSlide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
             } else {
-                leftSlide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.UNKNOWN);
+                leftSlide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
             }
         }
+
+        telemetry.addLine("isClimbing State: " + doClimbing);
 
         if (gamepad2.circle) {
             mechanisms.extend();

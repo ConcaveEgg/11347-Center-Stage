@@ -14,7 +14,7 @@ public class OuttakeTester extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
-        Gamepad p1 = new Gamepad();
+        Gamepad p1 = gamepad1;;
         outtake = new Outtake(p1, hardwareMap);
         v4b = new V4B(hardwareMap);
 

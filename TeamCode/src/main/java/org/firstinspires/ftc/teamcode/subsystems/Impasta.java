@@ -137,7 +137,7 @@ public class Impasta {
             leftSlide.setPower(-dr4bp);
             rightSlide.setPower(dr4bp);
         } else {
-            rightSlide.setPower(-dr4bp);
+            rightSlide.setPower(dr4bp);
         }
     }
 
