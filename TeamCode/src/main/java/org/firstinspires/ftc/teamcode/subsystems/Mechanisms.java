@@ -77,13 +77,13 @@ public class Mechanisms extends SubsystemBase {
         if (gamepad2.left_trigger > 0.3) {
             out1.setPosition(1);
         } else {
-            out1.setPosition(0.92);
+            out1.setPosition(0.91);
         }
 
         if (gamepad2.right_trigger > 0.3) {
             out2.setPosition(1);
         } else {
-            out2.setPosition(0.92);
+            out2.setPosition(0.91);
         }
     }
 }
