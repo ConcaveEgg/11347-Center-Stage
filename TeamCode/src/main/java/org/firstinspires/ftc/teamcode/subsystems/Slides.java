@@ -3,102 +3,115 @@ package org.firstinspires.ftc.teamcode.subsystems;
 import com.arcrobotics.ftclib.command.SubsystemBase;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.ServoImpl;
+import com.qualcomm.robotcore.hardware.ServoImplEx;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 
 public class Slides extends SubsystemBase {
-
-    public enum SlidePos {
+    public enum SlidePositions {
         DOWN(0),
-        LOW(150), //way too high
-        MED(300),
-        HIGH(450);
+        SHORT(1560),
+        MID(1900),
+        HIGH(2300);
 
         public int position;
 
-        SlidePos(int position) {
+        SlidePositions(int position){
             this.position = position;
+        }
+
+        public int getPosition() {
+            return this.position;
         }
     }
 
-    private DcMotorEx lMotor, rMotor;
+    final double winchServoInit = 0.5, winchServoEngage = 0.66;
+
+    DcMotorEx leftMotor;
+    DcMotorEx rightMotor;
+
     private VoltageSensor voltageSensor;
-    private double voltageComp = 1.0;
+    private double voltageComp;
+    private double VOLTAGE_WHEN_LIFT_TUNED = 13.0;
 
-    private PID pid;
-    public Slides(HardwareMap hardwareMap) {
-        lMotor = hardwareMap.get(DcMotorEx.class, "frontEncoder");
-        rMotor = hardwareMap.get(DcMotorEx.class, "Right Slide");
+    public Slides(HardwareMap hardwareMap){
 
-        lMotor.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
-        lMotor.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
-        rMotor.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
-        rMotor.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
+        leftMotor = hardwareMap.get(DcMotorEx.class, "leftSlide_frontEncoder");
+        rightMotor = hardwareMap.get(DcMotorEx.class, "rightSlide");
 
-        lMotor.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
-        rMotor.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
+        // Zero both the motors
+        leftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
-        pid = new PID(1, 0, 0);
+        // We don't need to use builtin PID
+        // THIS DOES NOT DISABLE THE ENCODER.
+        leftMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        rightMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
-//        voltageSensor = hardwareMap.voltageSensor.iterator().next();
-//        voltageComp = 12.0 / voltageSensor.getVoltage();
+        // Make it so the when positive power applied, lift moves up.
+//        leftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+        rightMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+
+        // Negate the gravity when stopped
+        //TODO gravity PID coefficients?
+        leftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT); // change to brake if bad
+        rightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+
+        voltageSensor = hardwareMap.voltageSensor.iterator().next();
+        voltageComp = VOLTAGE_WHEN_LIFT_TUNED / voltageSensor.getVoltage();
     }
 
     @Override
-    public void periodic() {}
-
-    private void setPower(double power) {
-        lMotor.setPower(power);
-        rMotor.setPower(-power);
+    public void periodic(){
+        // happens every loop
     }
 
-    public void setSlidesPower(double power) {
-        lMotor.setPower(power);
-        rMotor.setPower(-power);
+    public void setLiftPower(double power){
+        //TODO this could be the PID demon
+        leftMotor.setPower(power);
+        rightMotor.setPower(power);
     }
 
-    public void stop() {
-        setPower(0.1);
+    public void brake_power(){
+        setLiftPower(0);
     }
 
-    public double getPos() {
-        return lMotor.getCurrentPosition();
+    public double getLiftPosition(){
+        return rightMotor.getCurrentPosition();
     }
 
-//    public double getSlideVel() {
-//        return lMotor.getVelocity();
-//    }
-
-    public void runToPos(double targetPos) {
-        double currentPos = getPos();
-        int output = pid.update(currentPos, targetPos);
-        lMotor.setTargetPosition(output);
-        lMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        rMotor.setTargetPosition(-output);
-        rMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-    }
-    public boolean atUpper() {
-        return getPos() > 600;
+    public double getLiftVelocity(){
+        return leftMotor.getVelocity();
     }
 
-    public boolean atLower() {
-        return getPos() < 5;
+    public boolean atUpperLimit(){
+        return getLiftPosition() > 2350;
     }
 
-    public void resetSlidePos() {
-        lMotor.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
-        lMotor.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
+    public boolean atLowerLimit(){
+        return getLiftPosition() < 5;
     }
 
-//    public double getVoltageComp() {
-//        return voltageComp;
-//    }
+    public void setLeftPower (double power) {
+        leftMotor.setPower(power);
+    }
 
-//    public void goToPosition(SlidePos position) {
-//        lMotor.setTargetPosition(position.position);
-//        lMotor.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
-//        rMotor.setTargetPosition(-position.position);
-//        rMotor.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
-//        setSlidesPower(0.1);
-//    }
+    public void setRightMotor (double power) {
+        rightMotor.setPower(power);
+    }
+
+    public void resetLiftPosition(){
+        leftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        leftMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        rightMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+    }
+
+    public double getVoltageComp(){
+        return voltageComp;
+    }
 }
